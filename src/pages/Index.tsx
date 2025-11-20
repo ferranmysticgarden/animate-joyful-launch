@@ -15,10 +15,16 @@ const Index = () => {
 
   const handleButtonClick = () => {
     setShowConfetti(true);
-    toast.success(lang === 'es' ? '¡Eres increíblemente rico!' : 'You are incredibly rich!', {
-      duration: 3000,
+    toast.success(lang === 'es' ? '💰 ¡Eres INCREÍBLEMENTE RICO! 💰' : '💰 You are INCREDIBLY RICH! 💰', {
+      duration: 4000,
+      style: {
+        background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+        color: '#000',
+        fontWeight: 'bold',
+        fontSize: '18px',
+      },
     });
-    setTimeout(() => setShowConfetti(false), 100);
+    setTimeout(() => setShowConfetti(false), 3500);
   };
 
   return (
@@ -78,7 +84,7 @@ const Index = () => {
             
             <button
               onClick={handleButtonClick}
-              className="relative w-72 h-72 md:w-80 md:h-80 rounded-full bg-gradient-party shadow-mega transition-all duration-300 hover:scale-125 active:scale-90 animate-pulse-crazy"
+              className="relative z-50 w-72 h-72 md:w-80 md:h-80 rounded-full bg-gradient-party shadow-mega transition-all duration-300 hover:scale-125 active:scale-90 animate-pulse-crazy cursor-pointer"
             >
               <div className="absolute inset-0 rounded-full bg-gradient-radial animate-rainbow" />
               <div className="absolute inset-4 rounded-full bg-gradient-gold animate-spin-slow" style={{ animationDuration: '4s' }} />
