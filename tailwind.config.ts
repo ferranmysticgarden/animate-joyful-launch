@@ -110,6 +110,10 @@ export default {
           "0%, 100%": { transform: "rotate(-3deg)" },
           "50%": { transform: "rotate(3deg)" },
         },
+        "slide-car": {
+          "0%": { transform: "translateX(0)", opacity: "1" },
+          "100%": { transform: "translateX(120vw)", opacity: "1" },
+        },
       },
       animation: {
         "float": "float 3s ease-in-out infinite",
@@ -123,6 +127,7 @@ export default {
         "confetti-fall": "confetti-fall 3s linear forwards",
         "slide-up": "slide-up 0.5s ease-out",
         "wiggle": "wiggle 0.5s ease-in-out infinite",
+        "slide-car": "slide-car 4s linear forwards",
       },
     },
   },
