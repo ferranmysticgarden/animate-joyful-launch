@@ -9,8 +9,8 @@ import { ParticleBackground } from "@/components/ParticleBackground";
 import { GarageButton } from "@/components/GarageButton";
 import { GarageModal } from "@/components/GarageModal";
 import { LanguageSwitch } from "@/components/LanguageSwitch";
+import { DollarSymbol } from "@/components/DollarSymbol";
 import { toast } from "sonner";
-import dollarSymbol from "@/assets/dollar-symbol.png";
 
 const Index = () => {
   const [lang, setLang] = useState<Language>('es');
@@ -69,16 +69,8 @@ const Index = () => {
       <section className="relative z-10 container mx-auto px-4 min-h-screen flex flex-col items-center justify-center">
         <div className="text-center space-y-12">
           {showDollar && (
-            <div className="animate-[scale-in_1.5s_ease-out,spin-slow_1.5s_ease-out,bounce-crazy_0.3s_ease-out_1.5s] inline-block relative">
-              <div className="absolute inset-0 blur-3xl opacity-60 bg-gradient-radial animate-pulse" style={{ filter: 'blur(60px)' }} />
-              <img
-                src={dollarSymbol}
-                alt="Dollar Symbol"
-                className="w-64 h-64 md:w-80 md:h-80 relative z-10"
-                style={{
-                  filter: 'drop-shadow(0 0 40px rgba(255, 215, 0, 0.9)) drop-shadow(0 0 80px rgba(255, 215, 0, 0.6))',
-                }}
-              />
+            <div className="animate-[scale-in_1.5s_ease-out,spin-slow_1.5s_ease-out,bounce-crazy_0.3s_ease-out_1.5s]">
+              <DollarSymbol />
             </div>
           )}
           
