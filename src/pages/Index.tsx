@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { Crown, Gem, Star, Sparkles, Zap } from "lucide-react";
+import { Crown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Language, getTranslation } from "@/lib/i18n";
 import { FloatingDollar } from "@/components/FloatingDollar";
 import { Confetti } from "@/components/Confetti";
-import { SparkleEffect } from "@/components/SparkleEffect";
-import { LuxuryCars } from "@/components/LuxuryCars";
 import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { toast } from "sonner";
 
@@ -40,21 +38,14 @@ const Index = () => {
         ))}
       </div>
 
-      <SparkleEffect />
-      <LuxuryCars />
       <Confetti show={showConfetti} />
       <LanguageSwitch currentLang={lang} onLanguageChange={setLang} />
 
       {/* Main Section */}
       <section className="relative z-10 container mx-auto px-4 min-h-screen flex flex-col items-center justify-center">
         <div className="text-center space-y-8 animate-slide-up">
-          {/* Rotating icons around crown */}
-          <div className="relative inline-block mb-12">
+          <div className="inline-block mb-12">
             <Crown className="w-32 h-32 text-primary mx-auto animate-bounce-crazy drop-shadow-[0_0_30px_hsl(45,100%,55%)]" />
-            <Gem className="absolute -top-4 -right-4 w-12 h-12 text-secondary animate-spin-slow drop-shadow-[0_0_20px_hsl(280,100%,70%)]" />
-            <Star className="absolute -bottom-2 -left-6 w-10 h-10 text-accent animate-pulse-crazy drop-shadow-[0_0_20px_hsl(340,100%,65%)]" />
-            <Sparkles className="absolute top-0 -left-4 w-8 h-8 text-primary animate-pulse-gold" />
-            <Zap className="absolute -top-2 right-0 w-10 h-10 text-secondary animate-wiggle" />
           </div>
           
           <h1 className="text-7xl md:text-9xl font-black animate-rainbow bg-gradient-party bg-[length:400%_400%] bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(255,215,0,0.8)]" style={{ 
@@ -68,22 +59,7 @@ const Index = () => {
             {t.subtitle}
           </p>
 
-          <div className="py-12 relative">
-            {/* Rotating sparkles around button */}
-            <div className="absolute inset-0 animate-spin-slow">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <Sparkles
-                  key={i}
-                  className="absolute text-primary"
-                  style={{
-                    left: `${50 + 45 * Math.cos((i * Math.PI * 2) / 8)}%`,
-                    top: `${50 + 45 * Math.sin((i * Math.PI * 2) / 8)}%`,
-                  }}
-                  size={24}
-                />
-              ))}
-            </div>
-            
+          <div className="py-12 relative">            
             <button
               onClick={handleButtonClick}
               className="relative z-50 w-72 h-72 md:w-80 md:h-80 rounded-full bg-gradient-party shadow-mega transition-all duration-300 hover:scale-125 active:scale-90 animate-pulse-crazy cursor-pointer"
@@ -99,14 +75,6 @@ const Index = () => {
           <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto font-bold animate-shimmer bg-gradient-party bg-[length:200%_100%] bg-clip-text text-transparent">
             {t.description}
           </p>
-          
-          {/* Dancing icons */}
-          <div className="flex justify-center gap-8 pt-8">
-            <Gem className="w-12 h-12 text-secondary animate-bounce-crazy" style={{ animationDelay: '0s' }} />
-            <Star className="w-12 h-12 text-accent animate-bounce-crazy" style={{ animationDelay: '0.2s' }} />
-            <Crown className="w-12 h-12 text-primary animate-bounce-crazy" style={{ animationDelay: '0.4s' }} />
-            <Sparkles className="w-12 h-12 text-secondary animate-bounce-crazy" style={{ animationDelay: '0.6s' }} />
-          </div>
         </div>
       </section>
 
