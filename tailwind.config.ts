@@ -50,14 +50,17 @@ export default {
       },
       backgroundImage: {
         'gradient-gold': 'var(--gradient-gold)',
+        'gradient-silver': 'var(--gradient-silver)',
         'gradient-party': 'var(--gradient-party)',
         'gradient-radial': 'var(--gradient-radial)',
         'gradient-dark': 'var(--gradient-dark)',
+        'gradient-metallic-silver': 'var(--gradient-metallic-silver)',
       },
       boxShadow: {
         'gold': 'var(--shadow-gold)',
         'glow': 'var(--shadow-glow)',
         'mega': 'var(--shadow-mega)',
+        'silver': 'var(--shadow-silver)',
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -74,8 +77,8 @@ export default {
           "50%": { transform: "translateY(-30px) rotate(5deg)" },
         },
         "shimmer": {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
+          "0%": { transform: "translateX(-100%) skewX(-12deg)" },
+          "100%": { transform: "translateX(200%) skewX(-12deg)" },
         },
         "rainbow": {
           "0%": { filter: "hue-rotate(0deg)" },
@@ -86,9 +89,10 @@ export default {
           "50%": { opacity: "0.8", transform: "scale(1.05)" },
         },
         "pulse-crazy": {
-          "0%, 100%": { transform: "scale(1) rotate(0deg)" },
-          "25%": { transform: "scale(1.1) rotate(5deg)" },
-          "75%": { transform: "scale(1.1) rotate(-5deg)" },
+          "0%, 100%": { transform: "scale(1)" },
+          "25%": { transform: "scale(1.15)" },
+          "50%": { transform: "scale(1)" },
+          "75%": { transform: "scale(0.9)" },
         },
         "spin-slow": {
           "0%": { transform: "rotate(0deg)" },
@@ -118,10 +122,10 @@ export default {
       animation: {
         "float": "float 3s ease-in-out infinite",
         "float-slow": "float-slow 4s ease-in-out infinite",
-        "shimmer": "shimmer 2s linear infinite",
+        "shimmer": "shimmer 3s ease-in-out infinite",
         "rainbow": "rainbow 3s linear infinite",
         "pulse-gold": "pulse-gold 1.5s ease-in-out infinite",
-        "pulse-crazy": "pulse-crazy 1s ease-in-out infinite",
+        "pulse-crazy": "pulse-crazy 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         "spin-slow": "spin-slow 8s linear infinite",
         "bounce-crazy": "bounce-crazy 1s ease-in-out infinite",
         "confetti-fall": "confetti-fall 3s linear forwards",
