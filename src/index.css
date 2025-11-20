@@ -8,44 +8,46 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 45 100% 51%;
+    --background: 0 0% 5%;
+    --foreground: 45 100% 55%;
 
-    --card: 0 0% 5%;
-    --card-foreground: 45 100% 51%;
+    --card: 0 0% 10%;
+    --card-foreground: 45 100% 55%;
 
-    --popover: 0 0% 5%;
-    --popover-foreground: 45 100% 51%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 45 100% 55%;
 
-    --primary: 45 100% 51%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 45 100% 55%;
+    --primary-foreground: 0 0% 10%;
 
-    --secondary: 38 92% 50%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 280 100% 70%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 45 40% 70%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 45 60% 75%;
 
-    --accent: 45 100% 51%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 340 100% 65%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 45 30% 25%;
-    --input: 45 30% 25%;
-    --ring: 45 100% 51%;
+    --border: 45 50% 40%;
+    --input: 45 50% 40%;
+    --ring: 45 100% 55%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* Luxury gold gradients */
-    --gradient-gold: linear-gradient(135deg, hsl(45 100% 51%), hsl(38 92% 50%));
-    --gradient-gold-radial: radial-gradient(circle, hsl(45 100% 51% / 0.2), transparent);
-    --gradient-dark: linear-gradient(180deg, hsl(0 0% 0%), hsl(0 0% 5%));
+    /* Vibrant luxury gradients */
+    --gradient-gold: linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B);
+    --gradient-party: linear-gradient(135deg, #FFD700, #FF6B6B, #A855F7, #06B6D4);
+    --gradient-radial: radial-gradient(circle at 50% 50%, hsl(45 100% 55% / 0.3), hsl(340 100% 65% / 0.2), transparent);
+    --gradient-dark: linear-gradient(180deg, hsl(0 0% 5%), hsl(280 50% 10%));
     
-    /* Shadows */
-    --shadow-gold: 0 10px 40px -10px hsl(45 100% 51% / 0.5);
-    --shadow-glow: 0 0 60px hsl(45 100% 51% / 0.3);
+    /* Dramatic shadows */
+    --shadow-gold: 0 0 80px hsl(45 100% 55% / 0.8), 0 0 40px hsl(45 100% 55% / 0.6);
+    --shadow-glow: 0 0 120px hsl(45 100% 55% / 0.9), 0 0 60px hsl(340 100% 65% / 0.6);
+    --shadow-mega: 0 0 150px hsl(45 100% 55% / 1), 0 0 100px hsl(340 100% 65% / 0.8), 0 0 50px hsl(280 100% 70% / 0.6);
     
     /* Animations */
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
