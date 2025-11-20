@@ -50,12 +50,14 @@ export default {
       },
       backgroundImage: {
         'gradient-gold': 'var(--gradient-gold)',
-        'gradient-gold-radial': 'var(--gradient-gold-radial)',
+        'gradient-party': 'var(--gradient-party)',
+        'gradient-radial': 'var(--gradient-radial)',
         'gradient-dark': 'var(--gradient-dark)',
       },
       boxShadow: {
         'gold': 'var(--shadow-gold)',
         'glow': 'var(--shadow-glow)',
+        'mega': 'var(--shadow-mega)',
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -75,9 +77,26 @@ export default {
           "0%": { backgroundPosition: "-200% 0" },
           "100%": { backgroundPosition: "200% 0" },
         },
+        "rainbow": {
+          "0%": { filter: "hue-rotate(0deg)" },
+          "100%": { filter: "hue-rotate(360deg)" },
+        },
         "pulse-gold": {
           "0%, 100%": { opacity: "1", transform: "scale(1)" },
           "50%": { opacity: "0.8", transform: "scale(1.05)" },
+        },
+        "pulse-crazy": {
+          "0%, 100%": { transform: "scale(1) rotate(0deg)" },
+          "25%": { transform: "scale(1.1) rotate(5deg)" },
+          "75%": { transform: "scale(1.1) rotate(-5deg)" },
+        },
+        "spin-slow": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        "bounce-crazy": {
+          "0%, 100%": { transform: "translateY(0) scale(1)" },
+          "50%": { transform: "translateY(-30px) scale(1.2)" },
         },
         "confetti-fall": {
           "0%": { transform: "translateY(-100vh) rotate(0deg)", opacity: "1" },
@@ -87,14 +106,23 @@ export default {
           "0%": { transform: "translateY(100%)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
         },
+        "wiggle": {
+          "0%, 100%": { transform: "rotate(-3deg)" },
+          "50%": { transform: "rotate(3deg)" },
+        },
       },
       animation: {
         "float": "float 3s ease-in-out infinite",
         "float-slow": "float-slow 4s ease-in-out infinite",
-        "shimmer": "shimmer 3s linear infinite",
-        "pulse-gold": "pulse-gold 2s ease-in-out infinite",
+        "shimmer": "shimmer 2s linear infinite",
+        "rainbow": "rainbow 3s linear infinite",
+        "pulse-gold": "pulse-gold 1.5s ease-in-out infinite",
+        "pulse-crazy": "pulse-crazy 1s ease-in-out infinite",
+        "spin-slow": "spin-slow 8s linear infinite",
+        "bounce-crazy": "bounce-crazy 1s ease-in-out infinite",
         "confetti-fall": "confetti-fall 3s linear forwards",
         "slide-up": "slide-up 0.5s ease-out",
+        "wiggle": "wiggle 0.5s ease-in-out infinite",
       },
     },
   },

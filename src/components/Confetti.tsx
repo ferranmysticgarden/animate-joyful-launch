@@ -5,6 +5,8 @@ interface ConfettiPiece {
   left: number;
   color: string;
   delay: number;
+  size: number;
+  shape: 'circle' | 'square' | 'star';
 }
 
 export const Confetti = ({ show }: { show: boolean }) => {
@@ -12,11 +14,19 @@ export const Confetti = ({ show }: { show: boolean }) => {
 
   useEffect(() => {
     if (show) {
-      const newPieces = Array.from({ length: 50 }, (_, i) => ({
+      const colors = [
+        '#FFD700', '#FFA500', '#FF6B6B', '#A855F7', 
+        '#06B6D4', '#10B981', '#F59E0B', '#EC4899'
+      ];
+      const shapes: Array<'circle' | 'square' | 'star'> = ['circle', 'square', 'star'];
+      
+      const newPieces = Array.from({ length: 100 }, (_, i) => ({
         id: i,
         left: Math.random() * 100,
-        color: ['hsl(45, 100%, 51%)', 'hsl(38, 92%, 50%)', 'hsl(0, 0%, 100%)'][Math.floor(Math.random() * 3)],
+        color: colors[Math.floor(Math.random() * colors.length)],
         delay: Math.random() * 0.5,
+        size: 4 + Math.random() * 8,
+        shape: shapes[Math.floor(Math.random() * shapes.length)],
       }));
       setPieces(newPieces);
 
@@ -32,11 +42,18 @@ export const Confetti = ({ show }: { show: boolean }) => {
       {pieces.map((piece) => (
         <div
           key={piece.id}
-          className="absolute w-2 h-2 rounded-full animate-confetti-fall"
+          className={`absolute animate-confetti-fall ${
+            piece.shape === 'circle' ? 'rounded-full' : 
+            piece.shape === 'square' ? 'rounded-sm' : 
+            'clip-star'
+          }`}
           style={{
             left: `${piece.left}%`,
             backgroundColor: piece.color,
             animationDelay: `${piece.delay}s`,
+            width: `${piece.size}px`,
+            height: `${piece.size}px`,
+            boxShadow: `0 0 10px ${piece.color}`,
           }}
         />
       ))}
