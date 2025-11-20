@@ -5,6 +5,7 @@ import { Language, getTranslation } from "@/lib/i18n";
 import { FloatingDollar } from "@/components/FloatingDollar";
 import { Confetti } from "@/components/Confetti";
 import { SparkleEffect } from "@/components/SparkleEffect";
+import { LuxuryCars } from "@/components/LuxuryCars";
 import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { toast } from "sonner";
 
@@ -40,6 +41,7 @@ const Index = () => {
       </div>
 
       <SparkleEffect />
+      <LuxuryCars />
       <Confetti show={showConfetti} />
       <LanguageSwitch currentLang={lang} onLanguageChange={setLang} />
 
