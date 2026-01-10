@@ -32,7 +32,7 @@ const VehicleDisplay = ({ image, onBack, backText }: VehicleDisplayProps) => {
       
       <div className="relative z-10 flex flex-col items-center">
         <div 
-          className="animate-spin-slow rounded-3xl p-8" 
+          className="rounded-3xl p-8" 
           style={{
             background: 'radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.4) 70%), linear-gradient(135deg, rgba(26, 26, 26, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%)',
             boxShadow: 'inset 0 0 80px rgba(255, 215, 0, 0.2), 0 10px 60px rgba(0, 0, 0, 0.8), 0 0 100px rgba(255, 215, 0, 0.3)',
