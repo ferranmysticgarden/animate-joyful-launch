@@ -32,32 +32,42 @@ fi
 echo "📦 Building web app..."
 npm run build
 
+# Ensure Android platform exists
+if [ ! -d "android" ]; then
+  echo "📱 Android platform no encontrada. Añadiendo Android..."
+  npx cap add android
+fi
+
 # Sync with Capacitor
 echo "🔄 Syncing with Android..."
 npx cap sync android
 
+# Signing config (usa variables de entorno para no teclear cada vez)
+export KEYSTORE_ALIAS="${KEYSTORE_ALIAS:-luxury-life}"
+export KEYSTORE_PATH="${KEYSTORE_PATH:-release-key.jks}"
+
+if [ -z "${KEYSTORE_PASSWORD:-}" ]; then
+  echo ""
+  echo "🔐 Introduce la contraseña del keystore:"
+  read -s KEYSTORE_PASSWORD
+  export KEYSTORE_PASSWORD
+fi
+
+if [ -z "${KEYSTORE_ALIAS_PASSWORD:-}" ]; then
+  echo ""
+  echo "🔐 Introduce la contraseña del alias:"
+  read -s KEYSTORE_ALIAS_PASSWORD
+  export KEYSTORE_ALIAS_PASSWORD
+fi
+
+echo "🔏 Preparando firmado + subiendo versionCode..."
+node scripts/android/prepare-android-release.mjs
+
 # Build AAB
 echo "🏗️  Building AAB..."
 cd android
-
-# Set gradle properties for signing
-echo ""
-echo "🔐 Introduce la contraseña del keystore:"
-read -s KEYSTORE_PASSWORD
-echo ""
-echo "🔐 Introduce la contraseña del alias:"
-read -s KEY_PASSWORD
-
-# Create or update local.properties with signing config
-cat > keystore.properties << EOF
-storeFile=../release-key.jks
-storePassword=$KEYSTORE_PASSWORD
-keyAlias=luxury-life
-keyPassword=$KEY_PASSWORD
-EOF
-
-# Build release AAB
 ./gradlew bundleRelease
+
 
 cd ..
 
