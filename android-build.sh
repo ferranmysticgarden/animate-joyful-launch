@@ -59,8 +59,21 @@ EOF
 # Build release AAB
 ./gradlew bundleRelease
 
+cd ..
+
 echo ""
 echo "============================================"
 echo "✅ AAB generado en:"
 echo "   android/app/build/outputs/bundle/release/app-release.aab"
 echo "============================================"
+
+# Abrir carpeta con el AAB
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # Mac
+    open android/app/build/outputs/bundle/release/
+else
+    # Linux
+    xdg-open android/app/build/outputs/bundle/release/
+fi
+
+echo "📂 Carpeta abierta!"

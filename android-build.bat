@@ -58,4 +58,9 @@ echo ============================================
 echo.
 
 cd ..
+
+REM Abrir carpeta con el AAB
+echo 📂 Abriendo carpeta...
+explorer android\app\build\outputs\bundle\release\
+
 pause
