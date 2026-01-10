@@ -1,33 +1,26 @@
 import { useState } from "react";
 import { VehicleCard } from "@/components/VehicleCard";
 import { PurchaseModal } from "@/components/PurchaseModal";
-import { Language } from "@/lib/i18n";
-import { translations } from "@/lib/translations";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import carLevel1 from "@/assets/car-level1.png";
-import carLevel2 from "@/assets/car-level2.png";
-import carLevel3 from "@/assets/car-level3.png";
-import carLevel4 from "@/assets/car-level4.png";
-import carLevel5 from "@/assets/car-level5.png";
-
-interface GarageProps {
-  lang: Language;
-}
+import level1Image from "@/assets/level1-sports-car.png";
+import level2Image from "@/assets/level2-yacht.jpeg";
+import level3Image from "@/assets/level3-helicopter.webp";
+import level4Image from "@/assets/level4-jet.webp";
+import level5Image from "@/assets/level5-mansion.png";
 
 const vehicles = [
-  { id: 1, level: "level1", price: "100€", image: carLevel1 },
-  { id: 2, level: "level2", price: "200€", image: carLevel2 },
-  { id: 3, level: "level3", price: "300€", image: carLevel3 },
-  { id: 4, level: "level4", price: "400€", image: carLevel4 },
-  { id: 5, level: "level5", price: "500€", image: carLevel5 },
+  { id: 1, name: "Sports Car", price: "€100", image: level1Image },
+  { id: 2, name: "Yacht", price: "€200", image: level2Image },
+  { id: 3, name: "Helicopter", price: "€300", image: level3Image },
+  { id: 4, name: "Private Jet", price: "€400", image: level4Image },
+  { id: 5, name: "Luxury Mansion", price: "€500", image: level5Image },
 ];
 
-const Garage = ({ lang }: GarageProps) => {
+const Garage = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<typeof vehicles[0] | null>(null);
   const navigate = useNavigate();
-  const t = translations[lang];
 
   const handlePurchase = () => {
     if (selectedVehicle) {
@@ -44,18 +37,18 @@ const Garage = ({ lang }: GarageProps) => {
           className="mb-8 border-primary/30 hover:border-primary"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          {t.backToGarage}
+          Back to Home
         </Button>
 
-        <h1 className="text-5xl font-bold text-center text-primary mb-12 animate-shimmer">
-          {t.garage}
+        <h1 className="text-5xl font-bold text-center text-primary mb-12 animate-shimmer tracking-wide" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+          GARAGE
         </h1>
 
         <div className="space-y-6">
           {vehicles.map((vehicle) => (
             <VehicleCard
               key={vehicle.id}
-              name={t[vehicle.level as keyof typeof t] as string}
+              name={vehicle.name}
               price={vehicle.price}
               image={vehicle.image}
               onClick={() => setSelectedVehicle(vehicle)}
@@ -69,12 +62,12 @@ const Garage = ({ lang }: GarageProps) => {
           open={!!selectedVehicle}
           onClose={() => setSelectedVehicle(null)}
           onPurchase={handlePurchase}
-          vehicleName={t[selectedVehicle.level as keyof typeof t] as string}
+          vehicleName={selectedVehicle.name}
           price={selectedVehicle.price}
-          purchaseText={t.purchaseQuestion}
-          forText={t.for}
-          acquireText={t.acquire}
-          cancelText={t.cancel}
+          purchaseText="Do you want to purchase this vehicle"
+          forText="for"
+          acquireText="Yes, Buy"
+          cancelText="No, Go Back"
         />
       )}
     </div>
