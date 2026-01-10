@@ -6,9 +6,39 @@ export const usePurchases = () => {
   const [purchasedLevels, setPurchasedLevels] = useState<number[]>([]);
 
   useEffect(() => {
+    // Current format: luxury_purchases = number[]
     const saved = localStorage.getItem(PURCHASES_KEY);
     if (saved) {
-      setPurchasedLevels(JSON.parse(saved));
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setPurchasedLevels(parsed.filter((n) => typeof n === "number"));
+          return;
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    // Legacy migration: luxuryPurchases = { level1: true, level2: true, bonus: true }
+    const legacy = localStorage.getItem("luxuryPurchases");
+    if (legacy) {
+      try {
+        const parsed = JSON.parse(legacy);
+        if (parsed && typeof parsed === "object") {
+          const levels = Object.keys(parsed)
+            .filter((k) => k.startsWith("level") && parsed[k])
+            .map((k) => Number(k.replace("level", "")))
+            .filter((n) => Number.isFinite(n));
+
+          if (levels.length) {
+            setPurchasedLevels(levels);
+            localStorage.setItem(PURCHASES_KEY, JSON.stringify(levels));
+          }
+        }
+      } catch {
+        // ignore
+      }
     }
   }, []);
 

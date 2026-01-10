@@ -11,15 +11,16 @@ const PaymentSuccess = () => {
   const level = searchParams.get("level");
 
   useEffect(() => {
-    // Mark level as purchased in localStorage
+    // Mark level as purchased in localStorage (same format as usePurchases)
     if (level) {
-      const purchases = JSON.parse(localStorage.getItem("luxuryPurchases") || "{}");
-      if (level === "6") {
-        purchases.bonus = true;
-      } else {
-        purchases[`level${level}`] = true;
+      const parsed = JSON.parse(localStorage.getItem("luxury_purchases") || "[]");
+      const existing: number[] = Array.isArray(parsed) ? parsed : [];
+      const numericLevel = Number(level);
+
+      if (Number.isFinite(numericLevel)) {
+        const updated = Array.from(new Set([...existing, numericLevel]));
+        localStorage.setItem("luxury_purchases", JSON.stringify(updated));
       }
-      localStorage.setItem("luxuryPurchases", JSON.stringify(purchases));
     }
 
     const timer = setTimeout(() => setShowConfetti(false), 5000);
@@ -65,7 +66,7 @@ const PaymentSuccess = () => {
         
         <div className="flex flex-col gap-4">
           <Button 
-            onClick={() => navigate(`/vehicle/${level}`)}
+            onClick={() => navigate(level === "6" ? "/vehicle/bonus" : `/vehicle/${level}`)}
             className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg py-6"
           >
             View Your Purchase
