@@ -4,6 +4,7 @@ import { PurchaseModal } from "@/components/PurchaseModal";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { usePurchases } from "@/hooks/usePurchases";
 import level1Image from "@/assets/level1-sports-car.png";
 import level2Image from "@/assets/level2-yacht.jpeg";
 import level3Image from "@/assets/level3-helicopter.webp";
@@ -21,9 +22,11 @@ const vehicles = [
 const Garage = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<typeof vehicles[0] | null>(null);
   const navigate = useNavigate();
+  const { isPurchased, purchaseLevel } = usePurchases();
 
   const handlePurchase = () => {
     if (selectedVehicle) {
+      purchaseLevel(selectedVehicle.level);
       navigate(`/vehicle/${selectedVehicle.id}`);
     }
   };
@@ -52,6 +55,7 @@ const Garage = () => {
               image={vehicle.image}
               level={vehicle.level}
               onClick={() => setSelectedVehicle(vehicle)}
+              isPurchased={isPurchased(vehicle.level)}
             />
           ))}
         </div>
