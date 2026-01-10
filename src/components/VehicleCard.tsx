@@ -1,13 +1,14 @@
 import { Card } from "./ui/card";
+import { Diamond } from "lucide-react";
 
 interface VehicleCardProps {
   name: string;
-  price: string;
   image: string;
+  level: number;
   onClick: () => void;
 }
 
-export const VehicleCard = ({ name, price, image, onClick }: VehicleCardProps) => {
+export const VehicleCard = ({ name, image, level, onClick }: VehicleCardProps) => {
   return (
     <Card
       onClick={onClick}
@@ -25,24 +26,29 @@ export const VehicleCard = ({ name, price, image, onClick }: VehicleCardProps) =
             className="w-full h-full object-cover relative z-10"
           />
         </div>
-        <div className="flex-1 flex items-center justify-between">
+        <div className="flex-1 flex flex-col justify-center">
           <h3 
             className="text-3xl font-extrabold text-primary tracking-wide uppercase"
             style={{ fontFamily: "'Orbitron', sans-serif", textShadow: '0 0 20px rgba(255, 215, 0, 0.3)' }}
           >
             {name}
           </h3>
-          <button
-            className="w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-red-700 hover:from-red-400 hover:to-red-600 text-white font-bold text-lg shadow-lg hover:shadow-red-500/50 transition-all duration-300 hover:scale-110 flex items-center justify-center border-4 border-red-400/50"
-            style={{ fontFamily: "'Orbitron', sans-serif" }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onClick();
-            }}
-          >
-            {price}
-          </button>
+          <div className="flex gap-1 mt-2">
+            {Array.from({ length: level }).map((_, i) => (
+              <Diamond key={i} className="w-5 h-5 text-primary fill-primary" />
+            ))}
+          </div>
         </div>
+        <button
+          className="w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-red-700 hover:from-red-400 hover:to-red-600 text-white font-bold text-lg shadow-lg hover:shadow-red-500/50 transition-all duration-300 hover:scale-110 flex items-center justify-center border-4 border-red-400/50"
+          style={{ fontFamily: "'Orbitron', sans-serif" }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick();
+          }}
+        >
+          BUY
+        </button>
       </div>
     </Card>
   );
