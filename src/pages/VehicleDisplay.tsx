@@ -1,17 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/Confetti";
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import applauseSound from "@/assets/purchase-applause.mp3";
 
 interface VehicleDisplayProps {
   image: string;
   onBack: () => void;
   backText: string;
+  isLevel5?: boolean;
 }
 
-const VehicleDisplay = ({ image, onBack, backText }: VehicleDisplayProps) => {
+const VehicleDisplay = ({ image, onBack, backText, isLevel5 = false }: VehicleDisplayProps) => {
   const [showConfetti, setShowConfetti] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => setShowConfetti(false), 3500);
@@ -34,6 +37,20 @@ const VehicleDisplay = ({ image, onBack, backText }: VehicleDisplayProps) => {
       }
     };
   }, []);
+
+  // Auto-navigate to bonus screen after 3 seconds if level 5
+  useEffect(() => {
+    if (isLevel5) {
+      const bonusTimer = setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current = null;
+        }
+        navigate("/bonus");
+      }, 3000);
+      return () => clearTimeout(bonusTimer);
+    }
+  }, [isLevel5, navigate]);
 
   const handleBack = () => {
     if (audioRef.current) {
