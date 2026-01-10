@@ -1,5 +1,3 @@
-import dollar3d from "@/assets/dollar-3d.png";
-
 export const DollarSymbol = () => {
   return (
     <div className="relative inline-block">
@@ -13,15 +11,21 @@ export const DollarSymbol = () => {
         }} 
       />
       
-      {/* Dollar symbol 3D image */}
-      <img 
-        src={dollar3d}
-        alt="Dollar"
-        className="relative z-10 w-48 h-auto md:w-64 lg:w-72"
+      {/* Dollar symbol - pure CSS */}
+      <span 
+        className="relative z-10 text-[12rem] md:text-[16rem] lg:text-[18rem] font-black leading-none"
         style={{
-          filter: 'drop-shadow(0 0 40px rgba(255, 215, 0, 0.8)) drop-shadow(0 0 80px rgba(255, 215, 0, 0.5))',
+          background: 'linear-gradient(135deg, #FFD700 0%, #FFA500 25%, #FFD700 50%, #DAA520 75%, #FFD700 100%)',
+          backgroundClip: 'text',
+          WebkitBackgroundClip: 'text',
+          color: 'transparent',
+          textShadow: '0 0 60px rgba(255, 215, 0, 0.8), 0 0 120px rgba(255, 215, 0, 0.5)',
+          WebkitTextStroke: '2px rgba(218, 165, 32, 0.5)',
+          filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5))',
         }}
-      />
+      >
+        $
+      </span>
     </div>
   );
 };
