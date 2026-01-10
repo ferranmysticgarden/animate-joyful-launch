@@ -28,27 +28,39 @@ REM Build web app
 echo 📦 Building web app...
 call npm run build
 
+REM Ensure Android platform exists
+if not exist "android" (
+    echo 📱 Android platform no encontrada. Añadiendo Android...
+    call npx cap add android
+)
+
 REM Sync with Capacitor
 echo 🔄 Syncing with Android...
 call npx cap sync android
 
+REM Signing config (usa variables de entorno para no teclear cada vez)
+if "%KEYSTORE_ALIAS%"=="" set KEYSTORE_ALIAS=luxury-life
+if "%KEYSTORE_PATH%"=="" set KEYSTORE_PATH=release-key.jks
+
+if "%KEYSTORE_PASSWORD%"=="" (
+    echo.
+    set /p KEYSTORE_PASSWORD=🔐 Introduce la contraseña del keystore: 
+)
+
+if "%KEYSTORE_ALIAS_PASSWORD%"=="" (
+    echo.
+    set /p KEYSTORE_ALIAS_PASSWORD=🔐 Introduce la contraseña del alias: 
+)
+
+echo 🔏 Preparando firmado + subiendo versionCode...
+node scripts\android\prepare-android-release.mjs
+if errorlevel 1 goto :error
+
 REM Build AAB
 echo 🏗️  Building AAB...
 cd android
-
-echo.
-set /p KEYSTORE_PASSWORD=🔐 Introduce la contraseña del keystore: 
-echo.
-set /p KEY_PASSWORD=🔐 Introduce la contraseña del alias: 
-
-REM Create keystore.properties
-echo storeFile=../release-key.jks > keystore.properties
-echo storePassword=%KEYSTORE_PASSWORD% >> keystore.properties
-echo keyAlias=luxury-life >> keystore.properties
-echo keyPassword=%KEY_PASSWORD% >> keystore.properties
-
-REM Build release AAB
 call gradlew.bat bundleRelease
+
 
 echo.
 echo ============================================
@@ -63,4 +75,9 @@ REM Abrir carpeta con el AAB
 echo 📂 Abriendo carpeta...
 explorer android\app\build\outputs\bundle\release\
 
+
+:error
+echo.
+echo ❌ Error preparando el firmado Android. Revisa el mensaje anterior.
+echo.
 pause
