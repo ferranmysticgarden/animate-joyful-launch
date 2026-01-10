@@ -8,6 +8,7 @@ import Garage from "./pages/Garage";
 import VehicleDisplay from "./pages/VehicleDisplay";
 import BonusScreen from "./pages/BonusScreen";
 import BonusVehicleDisplay from "./pages/BonusVehicleDisplay";
+import PaymentSuccess from "./pages/PaymentSuccess";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
@@ -37,7 +38,7 @@ const VehicleRoute = () => {
     <VehicleDisplay
       image={image}
       onBack={() => navigate("/garage")}
-      backText="Volver al Garage"
+      backText="Back to Garage"
       isLevel5={isLevel5}
     />
   );
@@ -56,6 +57,7 @@ const App = () => {
             <Route path="/vehicle/:id" element={<VehicleRoute />} />
             <Route path="/bonus" element={<BonusScreen />} />
             <Route path="/vehicle/bonus" element={<BonusVehicleDisplay />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<NotFound />} />

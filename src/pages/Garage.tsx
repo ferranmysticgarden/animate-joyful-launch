@@ -2,9 +2,11 @@ import { useState } from "react";
 import { VehicleCard } from "@/components/VehicleCard";
 import { PurchaseModal } from "@/components/PurchaseModal";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { usePurchases } from "@/hooks/usePurchases";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import level1Image from "@/assets/level1-sports-car.png";
 import level2Image from "@/assets/level2-yacht.jpeg";
 import level3Image from "@/assets/level3-helicopter.webp";
@@ -13,22 +15,46 @@ import level5Image from "@/assets/level5-mansion.png";
 import dollarGold from "@/assets/dollar-gold.png";
 
 const vehicles = [
-  { id: 1, name: "Sports Car", price: "€100", image: level1Image, level: 1 },
-  { id: 2, name: "Yacht", price: "€200", image: level2Image, level: 2 },
-  { id: 3, name: "Helicopter", price: "€300", image: level3Image, level: 3 },
-  { id: 4, name: "Private Jet", price: "€400", image: level4Image, level: 4 },
-  { id: 5, name: "Luxury Mansion", price: "€500", image: level5Image, level: 5 },
+  { id: 1, name: "Sports Car", price: "€5", image: level1Image, level: 1 },
+  { id: 2, name: "Yacht", price: "€10", image: level2Image, level: 2 },
+  { id: 3, name: "Helicopter", price: "€25", image: level3Image, level: 3 },
+  { id: 4, name: "Private Jet", price: "€50", image: level4Image, level: 4 },
+  { id: 5, name: "Luxury Mansion", price: "€100", image: level5Image, level: 5 },
 ];
 
 const Garage = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<typeof vehicles[0] | null>(null);
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { isPurchased, purchaseLevel } = usePurchases();
+  const { isPurchased } = usePurchases();
 
-  const handlePurchase = () => {
-    if (selectedVehicle) {
-      purchaseLevel(selectedVehicle.level);
-      navigate(`/vehicle/${selectedVehicle.id}`);
+  const handlePurchase = async () => {
+    if (!selectedVehicle) return;
+    
+    if (!email || !email.includes("@")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment", {
+        body: { level: selectedVehicle.level, email },
+      });
+
+      if (error) throw error;
+      if (!data?.url) throw new Error("No checkout URL received");
+
+      // Open Stripe checkout in new tab
+      window.open(data.url, "_blank");
+      setSelectedVehicle(null);
+      toast.success("Redirecting to payment...");
+    } catch (err) {
+      console.error("Payment error:", err);
+      toast.error("Failed to start payment. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -82,17 +108,16 @@ const Garage = () => {
         </div>
       </div>
 
-      {selectedVehicle && (
+      {selectedVehicle && !isPurchased(selectedVehicle.level) && (
         <PurchaseModal
           open={!!selectedVehicle}
           onClose={() => setSelectedVehicle(null)}
-          onPurchase={handlePurchase}
           vehicleName={selectedVehicle.name}
           price={selectedVehicle.price}
-          purchaseText="Do you want to purchase this vehicle"
-          forText="for"
-          acquireText="Yes, Buy"
-          cancelText="No, Go Back"
+          email={email}
+          onEmailChange={setEmail}
+          onPurchase={handlePurchase}
+          isLoading={isLoading}
         />
       )}
     </div>
