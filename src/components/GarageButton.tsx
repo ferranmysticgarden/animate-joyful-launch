@@ -7,19 +7,16 @@ interface GarageButtonProps {
 
 export const GarageButton = ({ onClick, text }: GarageButtonProps) => {
   return (
-    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+    <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-50">
       <Button
         onClick={onClick}
-        size="lg"
-        className="px-12 py-6 text-2xl font-black bg-[image:var(--gradient-metallic-silver)] text-black hover:scale-110 transition-all duration-300 rounded-full border-4 border-white/40 relative overflow-hidden"
+        className="w-24 h-24 md:w-28 md:h-28 text-xl md:text-2xl font-black bg-red-600 hover:bg-red-500 text-white hover:scale-110 transition-all duration-300 rounded-full border-4 border-red-400/50 relative overflow-hidden"
         style={{
-          boxShadow: 'var(--shadow-silver)',
+          boxShadow: '0 0 30px rgba(239, 68, 68, 0.6), 0 0 60px rgba(239, 68, 68, 0.3)',
           animation: 'pulse-crazy 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-          textShadow: '0 2px 10px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.8)'
         }}
       >
-        <span className="relative z-10 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">{text}</span>
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -skew-x-12 animate-shimmer" />
+        <span className="relative z-10 font-bold tracking-wide">{text}</span>
       </Button>
     </div>
   );
