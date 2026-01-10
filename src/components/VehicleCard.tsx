@@ -35,7 +35,7 @@ export const VehicleCard = ({ name, image, level, onClick }: VehicleCardProps) =
           </h3>
           <div className="flex gap-1 mt-2">
             {Array.from({ length: level }).map((_, i) => (
-              <Diamond key={i} className="w-5 h-5 text-primary fill-primary" />
+              <Diamond key={i} className="w-5 h-5 text-blue-400 fill-blue-400" />
             ))}
           </div>
         </div>
