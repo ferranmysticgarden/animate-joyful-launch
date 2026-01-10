@@ -12,7 +12,7 @@ import level2Image from "@/assets/level2-yacht.jpeg";
 import level3Image from "@/assets/level3-helicopter.webp";
 import level4Image from "@/assets/level4-jet.webp";
 import level5Image from "@/assets/level5-mansion.png";
-import dollarGold from "@/assets/dollar-gold.png";
+import { FloatingDollar } from "@/components/FloatingDollar";
 
 const vehicles = [
   { id: 1, name: "Sports Car", price: "€100", image: level1Image, level: 1 },
@@ -63,20 +63,21 @@ const Garage = () => {
       {/* Floating dollar pattern background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {[...Array(12)].map((_, i) => (
-          <img
+          <div
             key={i}
-            src={dollarGold}
-            alt=""
-            className="absolute opacity-10 animate-pulse"
+            className="absolute"
             style={{
-              width: `${60 + (i % 3) * 30}px`,
               left: `${(i % 4) * 25 + 5}%`,
               top: `${Math.floor(i / 4) * 35 + 10}%`,
               transform: `rotate(${(i * 15) - 20}deg)`,
-              animationDelay: `${i * 0.3}s`,
-              animationDuration: `${3 + (i % 2)}s`,
             }}
-          />
+          >
+            <FloatingDollar 
+              delay={i * 0.3} 
+              duration={3 + (i % 2)} 
+              size={60 + (i % 3) * 30} 
+            />
+          </div>
         ))}
       </div>
       
