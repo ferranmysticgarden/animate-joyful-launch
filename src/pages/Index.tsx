@@ -77,7 +77,7 @@ const Index = () => {
           {showText && (
             <div className="animate-[fade-in_0.5s_ease-out,scale-in_0.5s_ease-out]">
               <h1 
-                className="text-6xl md:text-8xl font-normal animate-rainbow bg-gradient-party bg-[length:400%_400%] bg-clip-text text-transparent drop-shadow-[0_0_40px_rgba(255,215,0,0.8)]"
+                className="text-7xl md:text-9xl lg:text-[10rem] font-normal animate-rainbow bg-gradient-party bg-[length:400%_400%] bg-clip-text text-transparent drop-shadow-[0_0_60px_rgba(255,215,0,0.9)]"
                 style={{ fontFamily: "'Pinyon Script', cursive" }}
               >
                 Luxury Life
@@ -87,7 +87,7 @@ const Index = () => {
         </div>
       </section>
 
-      <GarageButton onClick={handleGarageClick} text="START" />
+      <GarageButton onClick={handleGarageClick} text="PLAY" />
 
       <GarageModal
         open={showGarageModal}
