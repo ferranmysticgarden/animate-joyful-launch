@@ -20,6 +20,9 @@ All colors MUST be HSL.
     --primary: 45 100% 55%;
     --primary-foreground: 0 0% 10%;
 
+    /* Level indicator (blue diamonds) */
+    --level: 210 100% 60%;
+
     --secondary: 280 100% 70%;
     --secondary-foreground: 0 0% 100%;
 

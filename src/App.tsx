@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useParams } from "react-router-dom";
 import Index from "./pages/Index";
 import Garage from "./pages/Garage";
 import VehicleDisplay from "./pages/VehicleDisplay";
@@ -25,6 +25,19 @@ const vehicleImages: Record<string, string> = {
   "5": level5Image,
 };
 
+const VehicleRoute = () => {
+  const { id } = useParams();
+  const image = (id && vehicleImages[id]) ?? vehicleImages["1"];
+
+  return (
+    <VehicleDisplay
+      image={image}
+      onBack={() => window.history.back()}
+      backText="Back to Garage"
+    />
+  );
+};
+
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -35,16 +48,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/garage" element={<Garage />} />
-            <Route 
-              path="/vehicle/:id" 
-              element={
-                <VehicleDisplay 
-                  image={vehicleImages[window.location.pathname.split('/')[2]]} 
-                  onBack={() => window.history.back()} 
-                  backText="Back to Garage"
-                />
-              } 
-            />
+            <Route path="/vehicle/:id" element={<VehicleRoute />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<NotFound />} />
