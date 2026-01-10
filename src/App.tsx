@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route, useParams, useNavigate } from "react-rout
 import Index from "./pages/Index";
 import Garage from "./pages/Garage";
 import VehicleDisplay from "./pages/VehicleDisplay";
+import BonusScreen from "./pages/BonusScreen";
+import BonusVehicleDisplay from "./pages/BonusVehicleDisplay";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
@@ -29,12 +31,14 @@ const VehicleRoute = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const image = (id && vehicleImages[id]) ?? vehicleImages["1"];
+  const isLevel5 = id === "5";
 
   return (
     <VehicleDisplay
       image={image}
       onBack={() => navigate("/garage")}
-      backText="Back to Garage"
+      backText="Volver al Garage"
+      isLevel5={isLevel5}
     />
   );
 };
@@ -50,6 +54,8 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/garage" element={<Garage />} />
             <Route path="/vehicle/:id" element={<VehicleRoute />} />
+            <Route path="/bonus" element={<BonusScreen />} />
+            <Route path="/vehicle/bonus" element={<BonusVehicleDisplay />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<NotFound />} />
