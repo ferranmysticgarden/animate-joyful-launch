@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useParams, useNavigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Garage from "./pages/Garage";
 import VehicleDisplay from "./pages/VehicleDisplay";
@@ -27,12 +27,13 @@ const vehicleImages: Record<string, string> = {
 
 const VehicleRoute = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const image = (id && vehicleImages[id]) ?? vehicleImages["1"];
 
   return (
     <VehicleDisplay
       image={image}
-      onBack={() => window.history.back()}
+      onBack={() => navigate("/garage")}
       backText="Back to Garage"
     />
   );
