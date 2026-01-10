@@ -16,11 +16,25 @@ const Terms = () => {
           <h1 className="text-4xl font-bold text-primary mb-6">Terms of Service</h1>
           <div className="prose prose-invert prose-gold max-w-none text-foreground/80 space-y-4">
             <p>
-              This application is a playful luxury simulation product. It does not imply real possession of vehicles, 
-              brands or properties. All vehicles shown are artistic representations without trademarks. 
-              The purpose of the app is to entertain and support charitable causes. 
-              10% of net revenue is donated to non-profit organizations. 
-              It is not permitted to use it for commercial, illegal or fraudulent purposes.
+              <strong>Luxury Life</strong> is a charitable entertainment application. Purchasing items in this app 
+              does NOT grant real ownership of any vehicles, properties, or assets. All items shown are 
+              artistic representations created for entertainment purposes only.
+            </p>
+            <p>
+              <strong>Charitable Purpose:</strong> A substantial portion of all proceeds from this application 
+              is donated to registered non-profit charitable organizations. By making a purchase, you are 
+              contributing to charitable causes while enjoying the entertainment experience.
+            </p>
+            <p>
+              <strong>No Real Value:</strong> Digital items purchased have no monetary value outside this app 
+              and cannot be resold, transferred, or exchanged for real goods or currency.
+            </p>
+            <p>
+              <strong>Payment Processing:</strong> All payments are processed securely through Stripe. 
+              Refunds may be requested within 14 days of purchase by contacting support.
+            </p>
+            <p>
+              Use of this app for fraudulent, illegal, or commercial purposes is strictly prohibited.
             </p>
           </div>
         </div>

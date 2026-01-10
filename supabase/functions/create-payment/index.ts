@@ -7,14 +7,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Price IDs for each level
+// Price IDs for each level (CORRECT PRICES)
 const PRICE_IDS: Record<number, string> = {
-  1: "price_1So8MMB6GI8NmIPnDs13dRTN", // Sports Car - 5€
-  2: "price_1So8NDB6GI8NmIPngwqVCzjh", // Yacht - 10€
-  3: "price_1So8NWB6GI8NmIPnpKcBztRu", // Helicopter - 25€
-  4: "price_1So8OYB6GI8NmIPnaRQuznPt", // Private Jet - 50€
-  5: "price_1So8P4B6GI8NmIPnKWr1FhVK", // Mansion - 100€
-  6: "price_1So8PLB6GI8NmIPnka0jI0wz", // Luxury Island - 1000€
+  1: "price_1So8TnB6GI8NmIPnJasBJsMH", // Sports Car - €100
+  2: "price_1So8U7B6GI8NmIPn2gmK5gxh", // Yacht - €200
+  3: "price_1So8UHB6GI8NmIPnbppQ0OGJ", // Helicopter - €300
+  4: "price_1So8URB6GI8NmIPnJuZ6J291", // Private Jet - €400
+  5: "price_1So8UeB6GI8NmIPnF8Y3K90q", // Mansion - €500
+  6: "price_1So8PLB6GI8NmIPnka0jI0wz", // Luxury Island - €1000
 };
 
 const logStep = (step: string, details?: any) => {
