@@ -15,11 +15,11 @@ import level5Image from "@/assets/level5-mansion.png";
 import dollarGold from "@/assets/dollar-gold.png";
 
 const vehicles = [
-  { id: 1, name: "Sports Car", price: "€5", image: level1Image, level: 1 },
-  { id: 2, name: "Yacht", price: "€10", image: level2Image, level: 2 },
-  { id: 3, name: "Helicopter", price: "€25", image: level3Image, level: 3 },
-  { id: 4, name: "Private Jet", price: "€50", image: level4Image, level: 4 },
-  { id: 5, name: "Luxury Mansion", price: "€100", image: level5Image, level: 5 },
+  { id: 1, name: "Sports Car", price: "€100", image: level1Image, level: 1 },
+  { id: 2, name: "Yacht", price: "€200", image: level2Image, level: 2 },
+  { id: 3, name: "Helicopter", price: "€300", image: level3Image, level: 3 },
+  { id: 4, name: "Private Jet", price: "€400", image: level4Image, level: 4 },
+  { id: 5, name: "Luxury Mansion", price: "€500", image: level5Image, level: 5 },
 ];
 
 const Garage = () => {

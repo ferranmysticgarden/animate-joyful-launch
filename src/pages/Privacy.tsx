@@ -16,11 +16,19 @@ const Privacy = () => {
           <h1 className="text-4xl font-bold text-primary mb-6">Privacy Policy</h1>
           <div className="prose prose-invert prose-gold max-w-none text-foreground/80 space-y-4">
             <p>
-              "¡SOY RICO!!!" only collects your Google email address to allow login. We do not store personal data, 
-              we do not share information with third parties, we do not use cookies or advertising tracking. 
-              10% of the net revenue from this app is donated to global charitable organizations. 
-              Your data is only used for authentication and is never sold. 
-              The app contains no advertising or recurring purchases.
+              <strong>Luxury Life</strong> collects your email address solely to process payments through Stripe. 
+              We do not store personal data beyond what is necessary for transactions. 
+              We do not share information with third parties for marketing purposes. 
+              We do not use cookies for advertising tracking.
+            </p>
+            <p>
+              <strong>Charitable Donations:</strong> A significant portion of net revenue from this app is donated 
+              to registered charitable organizations. The exact percentage is determined by the app operator 
+              in compliance with applicable regulations and platform policies.
+            </p>
+            <p>
+              Your payment data is securely processed by Stripe and is never stored on our servers. 
+              The app contains no recurring subscriptions - all purchases are one-time payments.
             </p>
           </div>
         </div>
