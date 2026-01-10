@@ -22,9 +22,8 @@ const Privacy = () => {
               We do not use cookies for advertising tracking.
             </p>
             <p>
-              <strong>Charitable Donations:</strong> A significant portion of net revenue from this app is donated 
-              to registered charitable organizations. The exact percentage is determined by the app operator 
-              in compliance with applicable regulations and platform policies.
+              <strong>Charitable Donations:</strong> 70% of net revenue from this app is donated 
+              to registered charitable organizations.
             </p>
             <p>
               Your payment data is securely processed by Stripe and is never stored on our servers. 

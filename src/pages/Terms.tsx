@@ -21,7 +21,7 @@ const Terms = () => {
               artistic representations created for entertainment purposes only.
             </p>
             <p>
-              <strong>Charitable Purpose:</strong> A substantial portion of all proceeds from this application 
+              <strong>Charitable Purpose:</strong> 70% of all proceeds from this application 
               is donated to registered non-profit charitable organizations. By making a purchase, you are 
               contributing to charitable causes while enjoying the entertainment experience.
             </p>
