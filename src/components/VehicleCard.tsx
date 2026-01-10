@@ -12,10 +12,10 @@ interface VehicleCardProps {
 export const VehicleCard = ({ name, image, level, onClick, isPurchased = false }: VehicleCardProps) => {
   return (
     <Card
-      onClick={isPurchased ? undefined : onClick}
+      onClick={onClick}
       className={`group p-6 bg-card/80 backdrop-blur-sm transition-all duration-300 ${
         isPurchased 
-          ? 'border-green-500/50 opacity-80 cursor-default' 
+          ? 'border-green-500/50 opacity-80 cursor-pointer hover:opacity-100' 
           : 'cursor-pointer border-primary/20 hover:border-primary/60 hover:shadow-gold hover:scale-[1.02]'
       }`}
     >
