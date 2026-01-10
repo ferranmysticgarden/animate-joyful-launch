@@ -102,13 +102,8 @@ const Garage = () => {
               name={vehicle.name}
               image={vehicle.image}
               level={vehicle.level}
-              onClick={() => {
-                if (isPurchased(vehicle.level)) {
-                  navigate(`/vehicle/${vehicle.level}`);
-                  return;
-                }
-                setSelectedVehicle(vehicle);
-              }}
+              onView={() => navigate(`/vehicle/${vehicle.level}`)}
+              onBuy={() => setSelectedVehicle(vehicle)}
               isPurchased={isPurchased(vehicle.level)}
             />
           ))}

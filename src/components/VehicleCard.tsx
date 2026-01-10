@@ -5,14 +5,22 @@ interface VehicleCardProps {
   name: string;
   image: string;
   level: number;
-  onClick: () => void;
+  onView?: () => void;
+  onBuy?: () => void;
   isPurchased?: boolean;
 }
 
-export const VehicleCard = ({ name, image, level, onClick, isPurchased = false }: VehicleCardProps) => {
+export const VehicleCard = ({
+  name,
+  image,
+  level,
+  onView,
+  onBuy,
+  isPurchased = false,
+}: VehicleCardProps) => {
   return (
     <Card
-      onClick={onClick}
+      onClick={onView}
       className={`group p-6 bg-card/80 backdrop-blur-sm transition-all duration-300 ${
         isPurchased 
           ? 'border-green-500/50 opacity-80 cursor-pointer hover:opacity-100' 
@@ -62,7 +70,7 @@ export const VehicleCard = ({ name, image, level, onClick, isPurchased = false }
             style={{ fontFamily: "'Orbitron', sans-serif" }}
             onClick={(e) => {
               e.stopPropagation();
-              onClick();
+              (onBuy ?? onView)?.();
             }}
           >
             BUY
