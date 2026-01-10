@@ -7,7 +7,7 @@ import { FloatingDollar } from "@/components/FloatingDollar";
 import { Confetti } from "@/components/Confetti";
 import { ParticleBackground } from "@/components/ParticleBackground";
 import { GarageButton } from "@/components/GarageButton";
-import { GarageModal } from "@/components/GarageModal";
+
 import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { DollarSymbol } from "@/components/DollarSymbol";
 import { toast } from "sonner";
@@ -17,7 +17,7 @@ const Index = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [showDollar, setShowDollar] = useState(false);
   const [showText, setShowText] = useState(false);
-  const [showGarageModal, setShowGarageModal] = useState(false);
+  
   const navigate = useNavigate();
   const t = translations[lang];
 
@@ -44,11 +44,6 @@ const Index = () => {
   }, []);
 
   const handleGarageClick = () => {
-    setShowGarageModal(true);
-  };
-
-  const handleGarageYes = () => {
-    setShowGarageModal(false);
     navigate("/garage");
   };
 
@@ -66,8 +61,8 @@ const Index = () => {
       <Confetti show={showConfetti} />
       <LanguageSwitch currentLang={lang} onLanguageChange={setLang} />
 
-      <section className="relative z-10 container mx-auto px-4 min-h-screen flex flex-col items-center justify-center">
-        <div className="text-center space-y-12">
+      <section className="relative z-10 container mx-auto px-4 min-h-screen flex flex-col items-center justify-center pb-32">
+        <div className="text-center space-y-8 -mt-16">
           {showDollar && (
             <div className="animate-[scale-in_1.5s_ease-out,spin-slow_1.5s_ease-out,bounce-crazy_0.3s_ease-out_1.5s]">
               <DollarSymbol />
@@ -75,28 +70,22 @@ const Index = () => {
           )}
           
           {showText && (
-            <div className="animate-[fade-in_0.5s_ease-out,scale-in_0.5s_ease-out]">
+            <div className="animate-[fade-in_0.5s_ease-out,scale-in_0.5s_ease-out] space-y-6">
               <h1 
                 className="text-7xl md:text-9xl lg:text-[10rem] font-normal animate-rainbow bg-gradient-party bg-[length:400%_400%] bg-clip-text text-transparent drop-shadow-[0_0_60px_rgba(255,215,0,0.9)]"
                 style={{ fontFamily: "'Pinyon Script', cursive" }}
               >
                 Luxury Life
               </h1>
+              <p className="text-xl md:text-2xl lg:text-3xl text-primary/90 font-semibold tracking-wide animate-pulse-gold">
+                Can you afford it?
+              </p>
             </div>
           )}
         </div>
       </section>
 
       <GarageButton onClick={handleGarageClick} text="PLAY" />
-
-      <GarageModal
-        open={showGarageModal}
-        onClose={() => setShowGarageModal(false)}
-        onYes={handleGarageYes}
-        question={t.garageQuestion}
-        yesText={t.yes}
-        noText={t.no}
-      />
 
       <footer className="relative z-10 container mx-auto px-4 py-8 mt-12 border-t border-primary/20">
         <div className="flex flex-col md:flex-row justify-center items-center gap-4 text-sm text-muted-foreground">
