@@ -11,11 +11,11 @@ import level4Image from "@/assets/level4-jet.webp";
 import level5Image from "@/assets/level5-mansion.png";
 
 const vehicles = [
-  { id: 1, name: "Sports Car", price: "€100", image: level1Image },
-  { id: 2, name: "Yacht", price: "€200", image: level2Image },
-  { id: 3, name: "Helicopter", price: "€300", image: level3Image },
-  { id: 4, name: "Private Jet", price: "€400", image: level4Image },
-  { id: 5, name: "Luxury Mansion", price: "€500", image: level5Image },
+  { id: 1, name: "Sports Car", price: "€100", image: level1Image, level: 1 },
+  { id: 2, name: "Yacht", price: "€200", image: level2Image, level: 2 },
+  { id: 3, name: "Helicopter", price: "€300", image: level3Image, level: 3 },
+  { id: 4, name: "Private Jet", price: "€400", image: level4Image, level: 4 },
+  { id: 5, name: "Luxury Mansion", price: "€500", image: level5Image, level: 5 },
 ];
 
 const Garage = () => {
@@ -40,8 +40,8 @@ const Garage = () => {
           Back to Home
         </Button>
 
-        <h1 className="text-5xl font-bold text-center text-primary mb-12 animate-shimmer tracking-wide" style={{ fontFamily: "'Orbitron', sans-serif" }}>
-          GARAGE
+        <h1 className="text-6xl font-bold text-center text-primary mb-12 tracking-wide" style={{ fontFamily: "'Brush Script MT', 'Segoe Script', cursive", textShadow: '0 0 30px rgba(255, 215, 0, 0.5)' }}>
+          Luxury Level
         </h1>
 
         <div className="space-y-6">
@@ -49,8 +49,8 @@ const Garage = () => {
             <VehicleCard
               key={vehicle.id}
               name={vehicle.name}
-              price={vehicle.price}
               image={vehicle.image}
+              level={vehicle.level}
               onClick={() => setSelectedVehicle(vehicle)}
             />
           ))}
