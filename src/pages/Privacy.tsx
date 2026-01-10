@@ -23,7 +23,7 @@ const Privacy = () => {
             </p>
             <p>
               <strong>Charitable Donations:</strong> 70% of net revenue from this app is donated 
-              to registered charitable organizations.
+              to UNICEF (United Nations Children's Fund) to support children worldwide.
             </p>
             <p>
               Your payment data is securely processed by Stripe and is never stored on our servers. 

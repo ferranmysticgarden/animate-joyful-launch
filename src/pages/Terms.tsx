@@ -22,8 +22,8 @@ const Terms = () => {
             </p>
             <p>
               <strong>Charitable Purpose:</strong> 70% of all proceeds from this application 
-              is donated to registered non-profit charitable organizations. By making a purchase, you are 
-              contributing to charitable causes while enjoying the entertainment experience.
+              is donated to UNICEF (United Nations Children's Fund). By making a purchase, you are 
+              helping children around the world while enjoying the entertainment experience.
             </p>
             <p>
               <strong>No Real Value:</strong> Digital items purchased have no monetary value outside this app 
