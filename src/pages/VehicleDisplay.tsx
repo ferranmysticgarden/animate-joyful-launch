@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/Confetti";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import applauseSound from "@/assets/purchase-applause.mp3";
 
 interface VehicleDisplayProps {
   image: string;
@@ -10,11 +11,37 @@ interface VehicleDisplayProps {
 
 const VehicleDisplay = ({ image, onBack, backText }: VehicleDisplayProps) => {
   const [showConfetti, setShowConfetti] = useState(true);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowConfetti(false), 3500);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    // Create and play audio on mount
+    audioRef.current = new Audio(applauseSound);
+    audioRef.current.loop = true;
+    audioRef.current.play().catch(() => {
+      // Autoplay may be blocked by browser
+    });
+
+    return () => {
+      // Stop audio on unmount
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  const handleBack = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    onBack();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-dark flex flex-col items-center justify-center p-8 relative overflow-hidden">
@@ -46,7 +73,7 @@ const VehicleDisplay = ({ image, onBack, backText }: VehicleDisplayProps) => {
         </div>
 
         <Button
-          onClick={onBack}
+          onClick={handleBack}
           size="lg"
           className="mt-12 px-12 py-6 text-2xl font-bold bg-gradient-gold text-primary-foreground shadow-gold"
         >
