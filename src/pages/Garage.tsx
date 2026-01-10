@@ -10,6 +10,7 @@ import level2Image from "@/assets/level2-yacht.jpeg";
 import level3Image from "@/assets/level3-helicopter.webp";
 import level4Image from "@/assets/level4-jet.webp";
 import level5Image from "@/assets/level5-mansion.png";
+import dollarGold from "@/assets/dollar-gold.png";
 
 const vehicles = [
   { id: 1, name: "Sports Car", price: "€100", image: level1Image, level: 1 },
@@ -32,8 +33,28 @@ const Garage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-dark p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-dark p-8 relative overflow-hidden">
+      {/* Floating dollar pattern background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {[...Array(12)].map((_, i) => (
+          <img
+            key={i}
+            src={dollarGold}
+            alt=""
+            className="absolute opacity-10 animate-pulse"
+            style={{
+              width: `${60 + (i % 3) * 30}px`,
+              left: `${(i % 4) * 25 + 5}%`,
+              top: `${Math.floor(i / 4) * 35 + 10}%`,
+              transform: `rotate(${(i * 15) - 20}deg)`,
+              animationDelay: `${i * 0.3}s`,
+              animationDuration: `${3 + (i % 2)}s`,
+            }}
+          />
+        ))}
+      </div>
+      
+      <div className="max-w-4xl mx-auto relative z-10">
         <Button
           onClick={() => navigate("/")}
           variant="outline"
