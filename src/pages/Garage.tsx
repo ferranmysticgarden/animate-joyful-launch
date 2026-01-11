@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { VehicleCard } from "@/components/VehicleCard";
 import { PurchaseModal } from "@/components/PurchaseModal";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { usePurchases } from "@/hooks/usePurchases";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -12,9 +12,20 @@ import level2Image from "@/assets/level2-yacht.jpeg";
 import level3Image from "@/assets/level3-helicopter.webp";
 import level4Image from "@/assets/level4-jet.webp";
 import level5Image from "@/assets/level5-mansion.png";
+import luxuryIslandImage from "@/assets/luxury-island.webp";
 import { FloatingDollar } from "@/components/FloatingDollar";
 
-const vehicles = [
+const UNLOCKS_KEY = "luxury_unlocked_levels";
+
+type Vehicle = {
+  id: number;
+  name: string;
+  price: string;
+  image: string;
+  level: number;
+};
+
+const baseVehicles: Vehicle[] = [
   { id: 1, name: "Sports Car", price: "€100", image: level1Image, level: 1 },
   { id: 2, name: "Yacht", price: "€200", image: level2Image, level: 2 },
   { id: 3, name: "Helicopter", price: "€300", image: level3Image, level: 3 },
@@ -22,16 +33,63 @@ const vehicles = [
   { id: 5, name: "Luxury Mansion", price: "€500", image: level5Image, level: 5 },
 ];
 
+const level6Vehicle: Vehicle = {
+  id: 6,
+  name: "Luxury Island",
+  price: "€1000",
+  image: luxuryIslandImage,
+  level: 6,
+};
+
+const readUnlockedLevels = (): number[] => {
+  const raw = localStorage.getItem(UNLOCKS_KEY);
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((n) => typeof n === "number");
+  } catch {
+    return [];
+  }
+};
+
 const Garage = () => {
-  const [selectedVehicle, setSelectedVehicle] = useState<typeof vehicles[0] | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [unlockedLevels, setUnlockedLevels] = useState<number[]>([]);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { isPurchased } = usePurchases();
+
+  useEffect(() => {
+    setUnlockedLevels(readUnlockedLevels());
+  }, []);
+
+  const showLevel6 = unlockedLevels.includes(6) || isPurchased(6);
+
+  const vehicles = useMemo(() => {
+    return showLevel6 ? [...baseVehicles, level6Vehicle] : baseVehicles;
+  }, [showLevel6]);
+
+  useEffect(() => {
+    const buyParam = searchParams.get("buy");
+    if (!buyParam) return;
+
+    const numeric = Number(buyParam);
+    const target = vehicles.find((v) => v.level === numeric);
+
+    // Only allow auto-open for level 6 if it's unlocked
+    if (target && (numeric !== 6 || showLevel6)) {
+      setSelectedVehicle(target);
+    }
+
+    setSearchParams({}, { replace: true });
+  }, [searchParams, setSearchParams, vehicles, showLevel6]);
 
   const handlePurchase = async () => {
     if (!selectedVehicle) return;
-    
+
     if (!email || !email.includes("@")) {
       toast.error("Please enter a valid email address");
       return;
@@ -69,18 +127,18 @@ const Garage = () => {
             style={{
               left: `${(i % 4) * 25 + 5}%`,
               top: `${Math.floor(i / 4) * 35 + 10}%`,
-              transform: `rotate(${(i * 15) - 20}deg)`,
+              transform: `rotate(${i * 15 - 20}deg)`,
             }}
           >
-            <FloatingDollar 
-              delay={i * 0.3} 
-              duration={3 + (i % 2)} 
-              size={60 + (i % 3) * 30} 
+            <FloatingDollar
+              delay={i * 0.3}
+              duration={3 + (i % 2)}
+              size={60 + (i % 3) * 30}
             />
           </div>
         ))}
       </div>
-      
+
       <div className="max-w-4xl mx-auto relative z-10">
         <Button
           onClick={() => navigate("/")}
@@ -91,7 +149,13 @@ const Garage = () => {
           Back to Home
         </Button>
 
-        <h1 className="text-6xl font-bold text-center text-primary mb-12 tracking-wide" style={{ fontFamily: "'Brush Script MT', 'Segoe Script', cursive", textShadow: '0 0 30px rgba(255, 215, 0, 0.5)' }}>
+        <h1
+          className="text-6xl font-bold text-center text-primary mb-12 tracking-wide"
+          style={{
+            fontFamily: "'Brush Script MT', 'Segoe Script', cursive",
+            textShadow: "0 0 30px rgba(255, 215, 0, 0.5)",
+          }}
+        >
           Luxury Level
         </h1>
 
@@ -105,6 +169,7 @@ const Garage = () => {
               onView={() => navigate(`/vehicle/${vehicle.level}`)}
               onBuy={() => setSelectedVehicle(vehicle)}
               isPurchased={isPurchased(vehicle.level)}
+              isNew={vehicle.level === 6 && showLevel6 && !isPurchased(6)}
             />
           ))}
         </div>
@@ -127,3 +192,4 @@ const Garage = () => {
 };
 
 export default Garage;
+
