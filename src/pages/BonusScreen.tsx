@@ -42,7 +42,7 @@ const BonusScreen = () => {
       audioRef.current.pause();
       audioRef.current = null;
     }
-    navigate("/vehicle/bonus");
+    navigate("/garage?buy=6");
   };
 
   return (

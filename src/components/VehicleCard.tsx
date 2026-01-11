@@ -1,6 +1,5 @@
 import { Card } from "./ui/card";
-import { Button } from "./ui/button";
-import { Diamond, Check } from "lucide-react";
+import { Diamond, Check, Sparkles } from "lucide-react";
 
 interface VehicleCardProps {
   name: string;
@@ -9,6 +8,7 @@ interface VehicleCardProps {
   onView?: () => void;
   onBuy?: () => void;
   isPurchased?: boolean;
+  isNew?: boolean;
 }
 
 export const VehicleCard = ({
@@ -18,6 +18,7 @@ export const VehicleCard = ({
   onView,
   onBuy,
   isPurchased = false,
+  isNew = false,
 }: VehicleCardProps) => {
   const isClickable = typeof onView === "function";
 
@@ -50,7 +51,21 @@ export const VehicleCard = ({
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5" />
-          <img src={image} alt={name} className="w-full h-full object-cover relative z-10" />
+
+          {isNew && !isPurchased && (
+            <div className="absolute top-2 left-2 z-30 inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/15 px-3 py-1 text-xs font-extrabold tracking-widest text-primary backdrop-blur-sm animate-pulse">
+              <Sparkles className="h-3.5 w-3.5" />
+              NUEVO NIVEL
+            </div>
+          )}
+
+          <img
+            src={image}
+            alt={name}
+            className="w-full h-full object-cover relative z-10"
+            loading="lazy"
+          />
+
           {isPurchased && (
             <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center z-20">
               <Check className="w-16 h-16 text-green-400" strokeWidth={3} />
@@ -76,20 +91,6 @@ export const VehicleCard = ({
         </div>
 
         <div className="flex flex-col items-center gap-3">
-          {onView && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-primary/30 hover:border-primary"
-              onClick={(e) => {
-                e.stopPropagation();
-                onView?.();
-              }}
-            >
-              VER
-            </Button>
-          )}
-
           {isPurchased ? (
             <div
               className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500 to-green-700 text-white font-bold text-xs shadow-lg flex items-center justify-center border-4 border-green-400/50"
@@ -104,7 +105,7 @@ export const VehicleCard = ({
               style={{ fontFamily: "'Orbitron', sans-serif" }}
               onClick={(e) => {
                 e.stopPropagation();
-                (onBuy ?? onView)?.();
+                onBuy?.();
               }}
             >
               BUY
