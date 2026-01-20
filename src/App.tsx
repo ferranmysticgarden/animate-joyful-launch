@@ -18,6 +18,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
 import level1Image from "@/assets/level1-sports-car.png";
 import level2Image from "@/assets/level2-yacht.jpeg";
 import level3Image from "@/assets/level3-helicopter.webp";
@@ -59,6 +60,7 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="/garage" element={<Garage />} />
             <Route path="/vehicle/:id" element={<VehicleRoute />} />
             <Route path="/bonus" element={<BonusScreen />} />
