@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { VehicleCard } from "@/components/VehicleCard";
 import { EliteVehicleCard } from "@/components/EliteVehicleCard";
 import { PurchaseModal } from "@/components/PurchaseModal";
@@ -18,8 +18,6 @@ import level7Image from "@/assets/level7-paradise-island.jpg";
 import level8Image from "@/assets/level8-space-station.jpg";
 import level9Image from "@/assets/level9-planet.jpg";
 import { FloatingDollar } from "@/components/FloatingDollar";
-
-const UNLOCKS_KEY = "luxury_unlocked_levels";
 
 type Vehicle = {
   id: number;
@@ -71,46 +69,16 @@ const allVehicles: Vehicle[] = [
   },
 ];
 
-const readUnlockedLevels = (): number[] => {
-  const raw = localStorage.getItem(UNLOCKS_KEY);
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter((n) => typeof n === "number");
-  } catch {
-    return [];
-  }
-};
-
 const Garage = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [unlockedLevels, setUnlockedLevels] = useState<number[]>([]);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { isPurchased } = usePurchases();
 
-  useEffect(() => {
-    setUnlockedLevels(readUnlockedLevels());
-  }, []);
-
-  // Show level 6 only if unlocked or purchased level 5
-  const showLevel6 = unlockedLevels.includes(6) || isPurchased(5) || isPurchased(6);
-  // Show elite levels (7, 8, 9) if level 6 is purchased
-  const showEliteLevels = isPurchased(6);
-
-  const vehicles = useMemo(() => {
-    let list = allVehicles.slice(0, 5); // Base levels 1-5
-    if (showLevel6) {
-      list = [...list, allVehicles[5]]; // Add level 6
-    }
-    if (showEliteLevels) {
-      list = [...list, ...allVehicles.slice(6)]; // Add levels 7, 8, 9
-    }
-    return list;
-  }, [showLevel6, showEliteLevels]);
+  // Always show all levels (1–9)
+  const vehicles = allVehicles;
 
   useEffect(() => {
     const buyParam = searchParams.get("buy");
@@ -212,7 +180,7 @@ const Garage = () => {
               onView={() => navigate(`/vehicle/${vehicle.level}`)}
               onBuy={() => setSelectedVehicle(vehicle)}
               isPurchased={isPurchased(vehicle.level)}
-              isNew={vehicle.level === 6 && showLevel6 && !isPurchased(6)}
+              isNew={vehicle.level === 6 && !isPurchased(6)}
             />
           ))}
         </div>
