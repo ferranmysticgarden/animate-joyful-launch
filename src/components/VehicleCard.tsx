@@ -5,6 +5,7 @@ interface VehicleCardProps {
   name: string;
   image: string;
   level: number;
+  price: string;
   onView?: () => void;
   onBuy?: () => void;
   isPurchased?: boolean;
@@ -15,6 +16,7 @@ export const VehicleCard = ({
   name,
   image,
   level,
+  price,
   onView,
   onBuy,
   isPurchased = false,
@@ -87,6 +89,15 @@ export const VehicleCard = ({
             {Array.from({ length: level }).map((_, i) => (
               <Diamond key={i} className="w-5 h-5 text-level fill-level" />
             ))}
+          </div>
+          <div 
+            className="text-2xl font-bold text-primary mt-2"
+            style={{
+              fontFamily: "'Orbitron', sans-serif",
+              textShadow: "0 0 15px rgba(255, 215, 0, 0.4)",
+            }}
+          >
+            {price}
           </div>
         </div>
 

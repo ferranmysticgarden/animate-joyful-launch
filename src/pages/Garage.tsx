@@ -177,6 +177,7 @@ const Garage = () => {
               name={vehicle.name}
               image={vehicle.image}
               level={vehicle.level}
+              price={vehicle.price}
               onView={() => navigate(`/vehicle/${vehicle.level}`)}
               onBuy={() => setSelectedVehicle(vehicle)}
               isPurchased={isPurchased(vehicle.level)}
