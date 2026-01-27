@@ -1,13 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Price IDs for each level (CORRECT PRICES)
+// Price IDs para cada nivel (VERIFICADOS CON STRIPE API)
 const PRICE_IDS: Record<number, string> = {
   1: "price_1So8TnB6GI8NmIPnJasBJsMH", // Sports Car - €100
   2: "price_1So8U7B6GI8NmIPn2gmK5gxh", // Yacht - €200
