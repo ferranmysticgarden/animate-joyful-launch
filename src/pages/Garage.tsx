@@ -30,6 +30,7 @@ type Vehicle = {
   isElite?: boolean;
 };
 
+// TODOS LOS 9 NIVELES CON PRECIOS CORRECTOS
 const allVehicles: Vehicle[] = [
   { id: 1, name: "Sports Car", price: "€100", priceValue: 100, image: level1Image, level: 1 },
   { id: 2, name: "Yacht", price: "€200", priceValue: 200, image: level2Image, level: 2 },
@@ -77,8 +78,12 @@ const Garage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { isPurchased } = usePurchases();
 
-  // Always show all levels (1–9)
+  // SIEMPRE MOSTRAR TODOS LOS 9 NIVELES
   const vehicles = allVehicles;
+
+  // Separar vehículos normales y elite
+  const regularVehicles = vehicles.filter(v => !v.isElite);
+  const eliteVehicles = vehicles.filter(v => v.isElite);
 
   useEffect(() => {
     const buyParam = searchParams.get("buy");
@@ -121,10 +126,6 @@ const Garage = () => {
       setIsLoading(false);
     }
   };
-
-  // Separate regular and elite vehicles
-  const regularVehicles = vehicles.filter(v => !v.isElite);
-  const eliteVehicles = vehicles.filter(v => v.isElite);
 
   return (
     <div className="min-h-screen bg-gradient-dark p-8 relative overflow-hidden">
@@ -169,7 +170,7 @@ const Garage = () => {
           Luxury Level
         </h1>
 
-        {/* Regular Vehicles */}
+        {/* Vehículos Normales (Niveles 1-6) */}
         <div className="space-y-6">
           {regularVehicles.map((vehicle) => (
             <VehicleCard
@@ -186,7 +187,7 @@ const Garage = () => {
           ))}
         </div>
 
-        {/* Elite Tier Separator */}
+        {/* Separador ELITE TIER */}
         {eliteVehicles.length > 0 && (
           <div className="my-16 relative">
             <div className="absolute inset-0 flex items-center">
@@ -211,7 +212,7 @@ const Garage = () => {
           </div>
         )}
 
-        {/* Elite Vehicles */}
+        {/* Vehículos Elite (Niveles 7-9) */}
         <div className="space-y-8">
           {eliteVehicles.map((vehicle) => (
             <EliteVehicleCard
