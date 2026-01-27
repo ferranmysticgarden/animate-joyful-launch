@@ -34,6 +34,17 @@ export const PurchaseModal = ({
         </DialogHeader>
         
         <div className="space-y-4">
+          {/* Status quote */}
+          <p 
+            className="text-xl text-center text-primary font-bold tracking-wide"
+            style={{ 
+              fontFamily: "'Orbitron', sans-serif",
+              textShadow: "0 0 20px rgba(255, 215, 0, 0.5)"
+            }}
+          >
+            "Tu estatus no se explica. Se demuestra."
+          </p>
+          
           <div>
             <label className="text-sm text-muted-foreground mb-2 block">
               Enter your email to proceed with payment:
@@ -48,10 +59,8 @@ export const PurchaseModal = ({
             />
           </div>
           
-          <p className="text-xs text-muted-foreground text-center">
-            You'll be redirected to secure Stripe checkout.
-            <br />
-            A portion of your payment goes to charity. 💝
+          <p className="text-xs text-muted-foreground/60 text-center">
+            Secure Stripe checkout
           </p>
           
           <div className="flex gap-4 justify-center pt-2">

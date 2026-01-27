@@ -15,6 +15,9 @@ const PRICE_IDS: Record<number, string> = {
   4: "price_1So8URB6GI8NmIPnJuZ6J291", // Private Jet - €400
   5: "price_1So8UeB6GI8NmIPnF8Y3K90q", // Mansion - €500
   6: "price_1So8PLB6GI8NmIPnka0jI0wz", // Luxury Island - €1000
+  7: "price_1Su9iLB6GI8NmIPnewKubmDH", // Private Paradise Island - €5000
+  8: "price_1Su9isB6GI8NmIPncg7ElWnp", // Orbital Space Station - €10000
+  9: "price_1Su9jLB6GI8NmIPnjMLJS8fQ", // Own a Planet - €50000
 };
 
 const logStep = (step: string, details?: any) => {

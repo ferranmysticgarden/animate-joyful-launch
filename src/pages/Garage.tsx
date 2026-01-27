@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { VehicleCard } from "@/components/VehicleCard";
+import { EliteVehicleCard } from "@/components/EliteVehicleCard";
 import { PurchaseModal } from "@/components/PurchaseModal";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -13,6 +14,9 @@ import level3Image from "@/assets/level3-helicopter.webp";
 import level4Image from "@/assets/level4-jet.webp";
 import level5Image from "@/assets/level5-mansion.png";
 import luxuryIslandImage from "@/assets/luxury-island.webp";
+import level7Image from "@/assets/level7-paradise-island.jpg";
+import level8Image from "@/assets/level8-space-station.jpg";
+import level9Image from "@/assets/level9-planet.jpg";
 import { FloatingDollar } from "@/components/FloatingDollar";
 
 const UNLOCKS_KEY = "luxury_unlocked_levels";
@@ -21,25 +25,51 @@ type Vehicle = {
   id: number;
   name: string;
   price: string;
+  priceValue: number;
   image: string;
   level: number;
+  description?: string;
+  isElite?: boolean;
 };
 
-const baseVehicles: Vehicle[] = [
-  { id: 1, name: "Sports Car", price: "€100", image: level1Image, level: 1 },
-  { id: 2, name: "Yacht", price: "€200", image: level2Image, level: 2 },
-  { id: 3, name: "Helicopter", price: "€300", image: level3Image, level: 3 },
-  { id: 4, name: "Private Jet", price: "€400", image: level4Image, level: 4 },
-  { id: 5, name: "Luxury Mansion", price: "€500", image: level5Image, level: 5 },
+const allVehicles: Vehicle[] = [
+  { id: 1, name: "Sports Car", price: "€100", priceValue: 100, image: level1Image, level: 1 },
+  { id: 2, name: "Yacht", price: "€200", priceValue: 200, image: level2Image, level: 2 },
+  { id: 3, name: "Helicopter", price: "€300", priceValue: 300, image: level3Image, level: 3 },
+  { id: 4, name: "Private Jet", price: "€400", priceValue: 400, image: level4Image, level: 4 },
+  { id: 5, name: "Luxury Mansion", price: "€500", priceValue: 500, image: level5Image, level: 5 },
+  { id: 6, name: "Luxury Island", price: "€1,000", priceValue: 1000, image: luxuryIslandImage, level: 6 },
+  { 
+    id: 7, 
+    name: "Private Paradise Island", 
+    price: "€5,000", 
+    priceValue: 5000,
+    image: level7Image, 
+    level: 7,
+    description: "Un lugar que no existe en los mapas. Solo para ti.",
+    isElite: true
+  },
+  { 
+    id: 8, 
+    name: "Orbital Space Station", 
+    price: "€10,000", 
+    priceValue: 10000,
+    image: level8Image, 
+    level: 8,
+    description: "El lujo definitivo ya no está en la Tierra.",
+    isElite: true
+  },
+  { 
+    id: 9, 
+    name: "Own a Planet", 
+    price: "€50,000", 
+    priceValue: 50000,
+    image: level9Image, 
+    level: 9,
+    description: "No posees cosas. Posees mundos.",
+    isElite: true
+  },
 ];
-
-const level6Vehicle: Vehicle = {
-  id: 6,
-  name: "Luxury Island",
-  price: "€1000",
-  image: luxuryIslandImage,
-  level: 6,
-};
 
 const readUnlockedLevels = (): number[] => {
   const raw = localStorage.getItem(UNLOCKS_KEY);
@@ -66,11 +96,21 @@ const Garage = () => {
     setUnlockedLevels(readUnlockedLevels());
   }, []);
 
-  const showLevel6 = unlockedLevels.includes(6) || isPurchased(6);
+  // Show level 6 only if unlocked or purchased level 5
+  const showLevel6 = unlockedLevels.includes(6) || isPurchased(5) || isPurchased(6);
+  // Show elite levels (7, 8, 9) if level 6 is purchased
+  const showEliteLevels = isPurchased(6);
 
   const vehicles = useMemo(() => {
-    return showLevel6 ? [...baseVehicles, level6Vehicle] : baseVehicles;
-  }, [showLevel6]);
+    let list = allVehicles.slice(0, 5); // Base levels 1-5
+    if (showLevel6) {
+      list = [...list, allVehicles[5]]; // Add level 6
+    }
+    if (showEliteLevels) {
+      list = [...list, ...allVehicles.slice(6)]; // Add levels 7, 8, 9
+    }
+    return list;
+  }, [showLevel6, showEliteLevels]);
 
   useEffect(() => {
     const buyParam = searchParams.get("buy");
@@ -79,13 +119,12 @@ const Garage = () => {
     const numeric = Number(buyParam);
     const target = vehicles.find((v) => v.level === numeric);
 
-    // Only allow auto-open for level 6 if it's unlocked
-    if (target && (numeric !== 6 || showLevel6)) {
+    if (target) {
       setSelectedVehicle(target);
     }
 
     setSearchParams({}, { replace: true });
-  }, [searchParams, setSearchParams, vehicles, showLevel6]);
+  }, [searchParams, setSearchParams, vehicles]);
 
   const handlePurchase = async () => {
     if (!selectedVehicle) return;
@@ -104,7 +143,6 @@ const Garage = () => {
       if (error) throw error;
       if (!data?.url) throw new Error("No checkout URL received");
 
-      // Open Stripe checkout in new tab
       window.open(data.url, "_blank");
       setSelectedVehicle(null);
       toast.success("Redirecting to payment...");
@@ -115,6 +153,10 @@ const Garage = () => {
       setIsLoading(false);
     }
   };
+
+  // Separate regular and elite vehicles
+  const regularVehicles = vehicles.filter(v => !v.isElite);
+  const eliteVehicles = vehicles.filter(v => v.isElite);
 
   return (
     <div className="min-h-screen bg-gradient-dark p-8 relative overflow-hidden">
@@ -159,8 +201,9 @@ const Garage = () => {
           Luxury Level
         </h1>
 
+        {/* Regular Vehicles */}
         <div className="space-y-6">
-          {vehicles.map((vehicle) => (
+          {regularVehicles.map((vehicle) => (
             <VehicleCard
               key={vehicle.id}
               name={vehicle.name}
@@ -172,6 +215,55 @@ const Garage = () => {
               isNew={vehicle.level === 6 && showLevel6 && !isPurchased(6)}
             />
           ))}
+        </div>
+
+        {/* Elite Tier Separator */}
+        {eliteVehicles.length > 0 && (
+          <div className="my-16 relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t-2 border-primary/40" 
+                style={{
+                  boxShadow: "0 0 20px rgba(255, 215, 0, 0.5)"
+                }}
+              />
+            </div>
+            <div className="relative flex justify-center">
+              <span 
+                className="bg-background px-8 py-3 text-2xl font-black text-primary uppercase tracking-[0.3em]"
+                style={{
+                  fontFamily: "'Orbitron', sans-serif",
+                  textShadow: "0 0 30px rgba(255, 215, 0, 0.8)",
+                  animation: "pulse-gold 2s ease-in-out infinite"
+                }}
+              >
+                ⚜️ ELITE TIER ⚜️
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Elite Vehicles */}
+        <div className="space-y-8">
+          {eliteVehicles.map((vehicle) => (
+            <EliteVehicleCard
+              key={vehicle.id}
+              name={vehicle.name}
+              image={vehicle.image}
+              level={vehicle.level}
+              price={vehicle.price}
+              description={vehicle.description || ""}
+              onView={() => navigate(`/vehicle/${vehicle.level}`)}
+              onBuy={() => setSelectedVehicle(vehicle)}
+              isPurchased={isPurchased(vehicle.level)}
+            />
+          ))}
+        </div>
+
+        {/* Charity Disclaimer - Subtle */}
+        <div className="mt-16 pt-8 border-t border-primary/10">
+          <p className="text-xs text-muted-foreground/50 text-center max-w-lg mx-auto">
+            Luxury Life es un proyecto benéfico legal. Las compras representan productos de lujo simbólicos que contribuyen a causas reales.
+          </p>
         </div>
       </div>
 
@@ -192,4 +284,3 @@ const Garage = () => {
 };
 
 export default Garage;
-

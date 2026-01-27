@@ -50,7 +50,7 @@ export const usePurchases = () => {
 
   const isPurchased = (level: number) => purchasedLevels.includes(level);
 
-  const allLevelsPurchased = () => [1, 2, 3, 4, 5].every(l => purchasedLevels.includes(l));
+  const allLevelsPurchased = () => [1, 2, 3, 4, 5, 6, 7, 8, 9].every(l => purchasedLevels.includes(l));
 
   const resetPurchases = () => {
     setPurchasedLevels([]);
