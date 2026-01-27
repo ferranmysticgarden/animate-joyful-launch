@@ -25,6 +25,9 @@ import level3Image from "@/assets/level3-helicopter.webp";
 import level4Image from "@/assets/level4-jet.webp";
 import level5Image from "@/assets/level5-mansion.png";
 import luxuryIslandImage from "@/assets/luxury-island.webp";
+import level7Image from "@/assets/level7-paradise-island.jpg";
+import level8Image from "@/assets/level8-space-station.jpg";
+import level9Image from "@/assets/level9-planet.jpg";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +38,9 @@ const vehicleImages: Record<string, string> = {
   "4": level4Image,
   "5": level5Image,
   "6": luxuryIslandImage,
+  "7": level7Image,
+  "8": level8Image,
+  "9": level9Image,
 };
 
 const VehicleRoute = () => {
