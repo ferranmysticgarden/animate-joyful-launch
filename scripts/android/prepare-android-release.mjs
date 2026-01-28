@@ -37,12 +37,9 @@ if (!fs.existsSync(keystoreAbsolute)) {
   fail(`Keystore file not found at: ${keystoreAbsolute}. Ensure it exists before building.`);
 }
 
-// NOTE: build.gradle lives under android/app and Gradle's `file("...")` resolves paths
-// relative to the module directory (android/app). So we must compute the keystore path
-// relative to android/app, not android/.
-const storeFileRelativeToAndroidApp = normalizeToForwardSlashes(
-  path.relative(androidAppDir, keystoreAbsolute)
-);
+// Use absolute path - most reliable across all environments
+const storeFilePath = normalizeToForwardSlashes(keystoreAbsolute);
+console.log(`[android-signing] Keystore path: ${storeFilePath}`);
 
 const keystorePassword = process.env.KEYSTORE_PASSWORD;
 const keyAliasPassword = process.env.KEYSTORE_ALIAS_PASSWORD;
@@ -53,7 +50,7 @@ if (!keyAliasPassword) fail("Missing env var KEYSTORE_ALIAS_PASSWORD.");
 
 const keystorePropsPath = path.join(androidDir, "keystore.properties");
 const keystoreProps = [
-  `storeFile=${storeFileRelativeToAndroidApp}`,
+  `storeFile=${storeFilePath}`,
   `storePassword=${keystorePassword}`,
   `keyAlias=${keyAlias}`,
   `keyPassword=${keyAliasPassword}`,
