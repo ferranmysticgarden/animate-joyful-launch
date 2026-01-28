@@ -9,6 +9,7 @@ import path from "path";
 
 const projectRoot = process.cwd();
 const androidDir = path.join(projectRoot, "android");
+const androidAppDir = path.join(androidDir, "app");
 
 const gradleGroovyPath = path.join(androidDir, "app", "build.gradle");
 const gradleKtsPath = path.join(androidDir, "app", "build.gradle.kts");
@@ -36,8 +37,11 @@ if (!fs.existsSync(keystoreAbsolute)) {
   fail(`Keystore file not found at: ${keystoreAbsolute}. Ensure it exists before building.`);
 }
 
-const storeFileRelativeToAndroid = normalizeToForwardSlashes(
-  path.relative(androidDir, keystoreAbsolute)
+// NOTE: build.gradle lives under android/app and Gradle's `file("...")` resolves paths
+// relative to the module directory (android/app). So we must compute the keystore path
+// relative to android/app, not android/.
+const storeFileRelativeToAndroidApp = normalizeToForwardSlashes(
+  path.relative(androidAppDir, keystoreAbsolute)
 );
 
 const keystorePassword = process.env.KEYSTORE_PASSWORD;
@@ -49,7 +53,7 @@ if (!keyAliasPassword) fail("Missing env var KEYSTORE_ALIAS_PASSWORD.");
 
 const keystorePropsPath = path.join(androidDir, "keystore.properties");
 const keystoreProps = [
-  `storeFile=${storeFileRelativeToAndroid}`,
+  `storeFile=${storeFileRelativeToAndroidApp}`,
   `storePassword=${keystorePassword}`,
   `keyAlias=${keyAlias}`,
   `keyPassword=${keyAliasPassword}`,
