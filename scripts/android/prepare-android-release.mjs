@@ -23,6 +23,95 @@ function normalizeToForwardSlashes(p) {
   return p.split(path.sep).join("/");
 }
 
+function findBracedBlock(text, headerRegex) {
+  const m = text.match(headerRegex);
+  if (!m || m.index == null) return null;
+  const start = m.index;
+  const openIdx = text.indexOf("{", start);
+  if (openIdx === -1) return null;
+  let depth = 0;
+  for (let i = openIdx; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === "{") depth++;
+    else if (ch === "}") {
+      depth--;
+      if (depth === 0) {
+        return {
+          start,
+          openIdx,
+          end: i + 1,
+          block: text.slice(start, i + 1),
+        };
+      }
+    }
+  }
+  return null;
+}
+
+function upsertGradlePropLine(blockText, propName, valueLine, indent) {
+  const lineRegex = new RegExp(`^\\s*${propName}\\s+.*$`, "m");
+  if (lineRegex.test(blockText)) {
+    return blockText.replace(lineRegex, `${indent}${valueLine}`);
+  }
+  // Insert right after opening brace
+  const braceIdx = blockText.indexOf("{");
+  if (braceIdx === -1) return blockText;
+  return (
+    blockText.slice(0, braceIdx + 1) +
+    `\n${indent}${valueLine}` +
+    blockText.slice(braceIdx + 1)
+  );
+}
+
+function ensureReleaseSigningConfigUsesKeystoreProperties(gradleText) {
+  const signingConfigs = findBracedBlock(gradleText, /\bsigningConfigs\s*\{/);
+  if (!signingConfigs) return gradleText;
+
+  const releaseBlock = findBracedBlock(signingConfigs.block, /\brelease\s*\{/);
+  if (!releaseBlock) return gradleText;
+
+  const headerMatch = releaseBlock.block.match(/^(\s*)release\s*\{/m);
+  const releaseIndent = headerMatch?.[1] ?? "        ";
+  const innerIndent = releaseIndent + "    ";
+
+  let patchedRelease = releaseBlock.block;
+  patchedRelease = upsertGradlePropLine(
+    patchedRelease,
+    "storeFile",
+    "storeFile file(keystoreProperties['storeFile'])",
+    innerIndent
+  );
+  patchedRelease = upsertGradlePropLine(
+    patchedRelease,
+    "storePassword",
+    "storePassword keystoreProperties['storePassword']",
+    innerIndent
+  );
+  patchedRelease = upsertGradlePropLine(
+    patchedRelease,
+    "keyAlias",
+    "keyAlias keystoreProperties['keyAlias']",
+    innerIndent
+  );
+  patchedRelease = upsertGradlePropLine(
+    patchedRelease,
+    "keyPassword",
+    "keyPassword keystoreProperties['keyPassword']",
+    innerIndent
+  );
+
+  const patchedSigningConfigsBlock =
+    signingConfigs.block.slice(0, releaseBlock.start) +
+    patchedRelease +
+    signingConfigs.block.slice(releaseBlock.end);
+
+  return (
+    gradleText.slice(0, signingConfigs.start) +
+    patchedSigningConfigsBlock +
+    gradleText.slice(signingConfigs.end)
+  );
+}
+
 if (!fs.existsSync(androidDir)) {
   fail('Missing "android" folder. Run "npx cap sync android" (or "npx cap add android") first.');
 }
@@ -134,6 +223,10 @@ if (!hasSigningConfigs) {
   const out = insertAfterAndroidOpen(gradle, signingBlock);
   if (out) gradle = out;
 }
+
+// If a release signingConfig already exists, force it to use keystore.properties
+// (some templates hardcode storeFile file('release-key.jks'), which breaks CI/local setups)
+gradle = ensureReleaseSigningConfigUsesKeystoreProperties(gradle);
 
 if (!hasReleaseSigningLine) {
   gradle = ensureBuildTypesReleaseSigning(gradle);

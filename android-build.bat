@@ -61,6 +61,9 @@ echo 🏗️  Building AAB...
 cd android
 call gradlew.bat bundleRelease
 
+REM Stop on Gradle failure (avoid printing success when build failed)
+if errorlevel 1 goto :error
+
 
 echo.
 echo ============================================
