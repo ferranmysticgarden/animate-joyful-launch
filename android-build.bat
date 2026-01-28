@@ -56,6 +56,12 @@ echo 🔏 Preparando firmado + subiendo versionCode...
 node scripts\android\prepare-android-release.mjs
 if errorlevel 1 goto :error
 
+REM Copy keystore to android/app as fallback for relative path resolution
+if exist "release-key.jks" (
+    echo 📋 Copiando keystore a android\app...
+    copy /Y "release-key.jks" "android\app\release-key.jks" >nul
+)
+
 REM Build AAB
 echo 🏗️  Building AAB...
 cd android
