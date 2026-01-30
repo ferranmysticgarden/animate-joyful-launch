@@ -7,10 +7,10 @@ import { FloatingDollar } from "@/components/FloatingDollar";
 import { Confetti } from "@/components/Confetti";
 import { ParticleBackground } from "@/components/ParticleBackground";
 import { GarageButton } from "@/components/GarageButton";
-
 import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { DollarSymbol } from "@/components/DollarSymbol";
 import { toast } from "sonner";
+import luxuryBackground from "@/assets/luxury-background.jpg";
 
 const Index = () => {
   const [lang, setLang] = useState<Language>('es');
@@ -48,12 +48,19 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-dark relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-radial animate-pulse-gold pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Luxury background image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${luxuryBackground})` }}
+      />
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 bg-gradient-radial animate-pulse-gold pointer-events-none opacity-30" />
       
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 25 }).map((_, i) => (
-          <FloatingDollar key={i} delay={i * 0.3} duration={2 + (i % 4)} size={24 + (i % 32)} />
+        {Array.from({ length: 15 }).map((_, i) => (
+          <FloatingDollar key={i} delay={i * 0.4} duration={3 + (i % 4)} size={20 + (i % 24)} />
         ))}
       </div>
 
