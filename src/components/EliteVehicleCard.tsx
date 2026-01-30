@@ -6,6 +6,7 @@ interface EliteVehicleCardProps {
   image: string;
   level: number;
   price: string;
+  originalPrice?: string;
   description: string;
   onView?: () => void;
   onBuy?: () => void;
@@ -17,6 +18,7 @@ export const EliteVehicleCard = ({
   image,
   level,
   price,
+  originalPrice,
   description,
   onView,
   onBuy,
@@ -132,14 +134,29 @@ export const EliteVehicleCard = ({
             ))}
           </div>
 
-          <div 
-            className="text-3xl font-black text-primary"
-            style={{
-              fontFamily: "'Orbitron', sans-serif",
-              textShadow: "0 0 20px rgba(255, 215, 0, 0.5)",
-            }}
-          >
-            {price}
+          <div className="flex items-center gap-3">
+            {originalPrice && (
+              <span 
+                className="text-xl text-muted-foreground line-through"
+                style={{ fontFamily: "'Orbitron', sans-serif" }}
+              >
+                {originalPrice}
+              </span>
+            )}
+            <span
+              className="text-3xl font-black text-primary"
+              style={{
+                fontFamily: "'Orbitron', sans-serif",
+                textShadow: "0 0 20px rgba(255, 215, 0, 0.5)",
+              }}
+            >
+              {price}
+            </span>
+            {originalPrice && (
+              <span className="text-xs bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1 rounded-full font-bold animate-pulse">
+                -33% OFF!
+              </span>
+            )}
           </div>
         </div>
 

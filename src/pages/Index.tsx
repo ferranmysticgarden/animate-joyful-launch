@@ -9,6 +9,12 @@ import { ParticleBackground } from "@/components/ParticleBackground";
 import { GarageButton } from "@/components/GarageButton";
 import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { DollarSymbol } from "@/components/DollarSymbol";
+import { PurchaseNotification } from "@/components/PurchaseNotification";
+import { PurchaseCounter } from "@/components/PurchaseCounter";
+import { UrgencyTimer } from "@/components/UrgencyTimer";
+import { TrustBadges } from "@/components/TrustBadges";
+import { Testimonials } from "@/components/Testimonials";
+import { DonationProgress } from "@/components/DonationProgress";
 import { toast } from "sonner";
 import luxuryBackground from "@/assets/luxury-background.jpg";
 
@@ -55,47 +61,52 @@ const Index = () => {
         style={{ backgroundImage: `url(${luxuryBackground})` }}
       />
       {/* Dark overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/40" />
-      <div className="absolute inset-0 bg-gradient-radial animate-pulse-gold pointer-events-none opacity-30" />
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-gradient-radial animate-pulse-gold pointer-events-none opacity-20" />
       
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 15 }).map((_, i) => (
-          <FloatingDollar key={i} delay={i * 0.4} duration={3 + (i % 4)} size={20 + (i % 24)} />
+        {Array.from({ length: 12 }).map((_, i) => (
+          <FloatingDollar key={i} delay={i * 0.5} duration={4 + (i % 3)} size={18 + (i % 20)} />
         ))}
       </div>
 
       <ParticleBackground />
       <Confetti show={showConfetti} />
       <LanguageSwitch currentLang={lang} onLanguageChange={setLang} />
+      <PurchaseNotification />
 
-      <section className="relative z-10 container mx-auto px-4 min-h-screen flex flex-col items-center justify-center pb-32">
-        <div className="text-center space-y-4 -mt-8">
-          {/* Title FIRST - above dollar */}
-          {showText && (
-            <div className="animate-[fade-in_0.5s_ease-out,scale-in_0.5s_ease-out]">
-              <h1 
-                className="text-6xl md:text-8xl lg:text-9xl font-normal animate-rainbow bg-gradient-party bg-[length:400%_400%] bg-clip-text text-transparent drop-shadow-[0_0_60px_rgba(255,215,0,0.9)]"
-                style={{ fontFamily: "'Pinyon Script', cursive" }}
-              >
-                Luxury Life
-              </h1>
-            </div>
-          )}
+      {/* Top bars - Urgency + Counter */}
+      <div className="relative z-20 pt-12">
+        <UrgencyTimer />
+        <PurchaseCounter />
+      </div>
+
+      <section className="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center py-8">
+        <div className="text-center space-y-2">
+          {/* Title FIRST - at the top */}
+          <div className={`transition-all duration-500 ${showText ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}>
+            <h1 
+              className="text-5xl md:text-7xl lg:text-8xl font-normal animate-rainbow bg-gradient-party bg-[length:400%_400%] bg-clip-text text-transparent drop-shadow-[0_0_60px_rgba(255,215,0,0.9)]"
+              style={{ fontFamily: "'Pinyon Script', cursive" }}
+            >
+              Luxury Life
+            </h1>
+          </div>
 
           {/* Dollar symbol BELOW title */}
           {showDollar && (
-            <div className="animate-[scale-in_1.5s_ease-out,spin-slow_1.5s_ease-out,bounce-crazy_0.3s_ease-out_1.5s] my-4">
+            <div className="animate-[scale-in_1.5s_ease-out,spin-slow_1.5s_ease-out,bounce-crazy_0.3s_ease-out_1.5s] py-2">
               <DollarSymbol />
             </div>
           )}
           
-          {/* Tagline and CTA below dollar */}
+          {/* Tagline below dollar */}
           {showText && (
-            <div className="animate-[fade-in_0.8s_ease-out] space-y-6 mt-4">
-              <p className="text-2xl md:text-3xl lg:text-4xl text-white font-bold tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+            <div className="animate-[fade-in_0.8s_ease-out] space-y-3">
+              <p className="text-xl md:text-2xl lg:text-3xl text-white font-bold tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                 Can you afford it?
               </p>
-              <p className="text-lg md:text-xl text-primary/90 animate-pulse-gold">
+              <p className="text-base md:text-lg text-primary animate-pulse-gold font-semibold">
                 🎁 70% goes to UNICEF charity
               </p>
             </div>
@@ -103,9 +114,24 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Trust badges */}
+      <div className="relative z-10">
+        <TrustBadges />
+      </div>
+
+      {/* Testimonials */}
+      <div className="relative z-10">
+        <Testimonials />
+      </div>
+
+      {/* Donation progress */}
+      <div className="relative z-10">
+        <DonationProgress />
+      </div>
+
       <GarageButton onClick={handleGarageClick} text="PLAY" />
 
-      <footer className="relative z-10 container mx-auto px-4 py-8 mt-12 border-t border-primary/20">
+      <footer className="relative z-10 container mx-auto px-4 py-6 border-t border-primary/20 bg-black/40">
         <div className="flex flex-col md:flex-row justify-center items-center gap-4 text-sm text-muted-foreground">
           <Link to="/privacy" className="hover:text-primary transition-colors">
             Privacy Policy
