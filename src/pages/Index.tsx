@@ -107,7 +107,7 @@ const Index = () => {
                 Can you afford it?
               </p>
               <p className="text-base md:text-lg text-primary animate-pulse-gold font-semibold">
-                🎁 70% goes to UNICEF charity
+                💎 Your status. Your rules.
               </p>
             </div>
           )}
@@ -130,6 +130,9 @@ const Index = () => {
       </div>
 
       <GarageButton onClick={handleGarageClick} text="PLAY" />
+
+      {/* Spacer for fixed button */}
+      <div className="h-40" />
 
       <footer className="relative z-10 container mx-auto px-4 py-6 border-t border-primary/20 bg-black/40">
         <div className="flex flex-col md:flex-row justify-center items-center gap-4 text-sm text-muted-foreground">

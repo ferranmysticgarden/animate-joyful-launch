@@ -12,6 +12,7 @@ interface PurchaseModalProps {
   email: string;
   onEmailChange: (email: string) => void;
   isLoading?: boolean;
+  showEmailInput?: boolean;
 }
 
 export const PurchaseModal = ({
@@ -23,6 +24,7 @@ export const PurchaseModal = ({
   email,
   onEmailChange,
   isLoading = false,
+  showEmailInput = true,
 }: PurchaseModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -42,25 +44,27 @@ export const PurchaseModal = ({
               textShadow: "0 0 20px rgba(255, 215, 0, 0.5)"
             }}
           >
-            "Tu estatus no se explica. Se demuestra."
+            "Your status speaks for itself."
           </p>
           
-          <div>
-            <label className="text-sm text-muted-foreground mb-2 block">
-              Enter your email to proceed with payment:
-            </label>
-            <Input
-              type="email"
-              placeholder="your@email.com"
-              value={email}
-              onChange={(e) => onEmailChange(e.target.value)}
-              className="bg-background/50 border-primary/30"
-              disabled={isLoading}
-            />
-          </div>
+          {showEmailInput && (
+            <div>
+              <label className="text-sm text-muted-foreground mb-2 block">
+                Enter your email to proceed with payment:
+              </label>
+              <Input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => onEmailChange(e.target.value)}
+                className="bg-background/50 border-primary/30"
+                disabled={isLoading}
+              />
+            </div>
+          )}
           
           <p className="text-xs text-muted-foreground/60 text-center">
-            Secure Stripe checkout
+            {showEmailInput ? "Secure Stripe checkout" : "Secure Google Play purchase"}
           </p>
           
           <div className="flex gap-4 justify-center pt-2">
@@ -68,7 +72,7 @@ export const PurchaseModal = ({
               onClick={onPurchase}
               size="lg"
               className="px-8 py-6 text-xl font-bold bg-green-500 hover:bg-green-600 text-white shadow-glow"
-              disabled={isLoading || !email}
+              disabled={isLoading || (showEmailInput && !email)}
             >
               {isLoading ? (
                 <>
@@ -76,7 +80,7 @@ export const PurchaseModal = ({
                   Processing...
                 </>
               ) : (
-                "Pay Now"
+                "Buy Now"
               )}
             </Button>
             <Button
