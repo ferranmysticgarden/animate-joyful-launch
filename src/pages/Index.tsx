@@ -69,23 +69,34 @@ const Index = () => {
       <LanguageSwitch currentLang={lang} onLanguageChange={setLang} />
 
       <section className="relative z-10 container mx-auto px-4 min-h-screen flex flex-col items-center justify-center pb-32">
-        <div className="text-center space-y-8 -mt-16">
-          {showDollar && (
-            <div className="animate-[scale-in_1.5s_ease-out,spin-slow_1.5s_ease-out,bounce-crazy_0.3s_ease-out_1.5s]">
-              <DollarSymbol />
-            </div>
-          )}
-          
+        <div className="text-center space-y-4 -mt-8">
+          {/* Title FIRST - above dollar */}
           {showText && (
-            <div className="animate-[fade-in_0.5s_ease-out,scale-in_0.5s_ease-out] space-y-6">
+            <div className="animate-[fade-in_0.5s_ease-out,scale-in_0.5s_ease-out]">
               <h1 
-                className="text-7xl md:text-9xl lg:text-[10rem] font-normal animate-rainbow bg-gradient-party bg-[length:400%_400%] bg-clip-text text-transparent drop-shadow-[0_0_60px_rgba(255,215,0,0.9)]"
+                className="text-6xl md:text-8xl lg:text-9xl font-normal animate-rainbow bg-gradient-party bg-[length:400%_400%] bg-clip-text text-transparent drop-shadow-[0_0_60px_rgba(255,215,0,0.9)]"
                 style={{ fontFamily: "'Pinyon Script', cursive" }}
               >
                 Luxury Life
               </h1>
-              <p className="text-xl md:text-2xl lg:text-3xl text-primary/90 font-semibold tracking-wide animate-pulse-gold">
+            </div>
+          )}
+
+          {/* Dollar symbol BELOW title */}
+          {showDollar && (
+            <div className="animate-[scale-in_1.5s_ease-out,spin-slow_1.5s_ease-out,bounce-crazy_0.3s_ease-out_1.5s] my-4">
+              <DollarSymbol />
+            </div>
+          )}
+          
+          {/* Tagline and CTA below dollar */}
+          {showText && (
+            <div className="animate-[fade-in_0.8s_ease-out] space-y-6 mt-4">
+              <p className="text-2xl md:text-3xl lg:text-4xl text-white font-bold tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                 Can you afford it?
+              </p>
+              <p className="text-lg md:text-xl text-primary/90 animate-pulse-gold">
+                🎁 70% goes to UNICEF charity
               </p>
             </div>
           )}
