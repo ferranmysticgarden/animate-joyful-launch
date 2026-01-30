@@ -3,10 +3,11 @@ import { VehicleCard } from "@/components/VehicleCard";
 import { EliteVehicleCard } from "@/components/EliteVehicleCard";
 import { PurchaseModal } from "@/components/PurchaseModal";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { usePurchases } from "@/hooks/usePurchases";
-import { supabase } from "@/integrations/supabase/client";
+import { usePurchaseHandler } from "@/hooks/usePurchaseHandler";
+import { useGooglePlayBilling } from "@/hooks/useGooglePlayBilling";
 import { toast } from "sonner";
 import level1Image from "@/assets/level1-sports-car.png";
 import level2Image from "@/assets/level2-yacht.jpeg";
@@ -76,11 +77,11 @@ const allVehicles: Vehicle[] = [
 
 const Garage = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-  const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { isPurchased } = usePurchases();
+  const { email, setEmail, isLoading, isNative, handlePurchase } = usePurchaseHandler();
+  const { restorePurchases } = useGooglePlayBilling();
 
   // SIEMPRE MOSTRAR TODOS LOS 9 NIVELES
   const vehicles = allVehicles;
@@ -103,32 +104,18 @@ const Garage = () => {
     setSearchParams({}, { replace: true });
   }, [searchParams, setSearchParams, vehicles]);
 
-  const handlePurchase = async () => {
+  const onPurchaseClick = async () => {
     if (!selectedVehicle) return;
-
-    if (!email || !email.includes("@")) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-payment", {
-        body: { level: selectedVehicle.level, email },
-      });
-
-      if (error) throw error;
-      if (!data?.url) throw new Error("No checkout URL received");
-
-      window.open(data.url, "_blank");
+    
+    const success = await handlePurchase(selectedVehicle);
+    if (success) {
       setSelectedVehicle(null);
-      toast.success("Redirecting to payment...");
-    } catch (err) {
-      console.error("Payment error:", err);
-      toast.error("Failed to start payment. Please try again.");
-    } finally {
-      setIsLoading(false);
     }
+  };
+
+  const handleRestore = async () => {
+    await restorePurchases();
+    toast.success("Purchases restored!");
   };
 
   return (
@@ -155,14 +142,28 @@ const Garage = () => {
       </div>
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <Button
-          onClick={() => navigate("/")}
-          variant="outline"
-          className="mb-8 border-primary/30 hover:border-primary"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Home
-        </Button>
+        <div className="flex justify-between items-center mb-8">
+          <Button
+            onClick={() => navigate("/")}
+            variant="outline"
+            className="border-primary/30 hover:border-primary"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Home
+          </Button>
+
+          {/* Restore Purchases button - only on Android */}
+          {isNative && (
+            <Button
+              onClick={handleRestore}
+              variant="ghost"
+              className="text-primary hover:text-primary/80"
+            >
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Restore
+            </Button>
+          )}
+        </div>
 
         <h1
           className="text-6xl font-bold text-center text-primary mb-12 tracking-wide"
@@ -251,8 +252,9 @@ const Garage = () => {
           price={selectedVehicle.price}
           email={email}
           onEmailChange={setEmail}
-          onPurchase={handlePurchase}
+          onPurchase={onPurchaseClick}
           isLoading={isLoading}
+          showEmailInput={!isNative}
         />
       )}
     </div>

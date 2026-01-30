@@ -5,35 +5,35 @@ const testimonials = [
   {
     name: "Carlos M.",
     location: "Madrid, Spain",
-    text: "Finally, a way to show my status AND help children. The Sports Car feels amazing!",
+    text: "The Sports Car changed everything. Now my friends know what real status looks like.",
     stars: 5,
     vehicle: "Sports Car"
   },
   {
     name: "Sarah J.",
     location: "New York, USA",
-    text: "Bought the Yacht for my collection. Knowing 70% goes to UNICEF makes it even better.",
+    text: "I bought the Yacht and I've never felt more powerful. This is what success feels like.",
     stars: 5,
     vehicle: "Yacht"
   },
   {
     name: "Mohammed A.",
     location: "Dubai, UAE",
-    text: "The Private Jet is the ultimate status symbol. My friends are jealous!",
+    text: "The Private Jet is the ultimate flex. My followers can't believe it!",
     stars: 5,
     vehicle: "Private Jet"
   },
   {
     name: "Emma W.",
     location: "London, UK",
-    text: "I own a Luxury Island now. Best purchase I ever made. For charity too!",
+    text: "Owning a Luxury Island? That's a whole different level of prestige.",
     stars: 5,
     vehicle: "Luxury Island"
   },
   {
     name: "Yuki T.",
     location: "Tokyo, Japan",
-    text: "The Mansion exceeded my expectations. Premium quality virtual luxury!",
+    text: "The Mansion is pure elegance. Finally something worthy of my lifestyle.",
     stars: 5,
     vehicle: "Mansion"
   }
