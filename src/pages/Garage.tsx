@@ -23,6 +23,7 @@ type Vehicle = {
   id: number;
   name: string;
   price: string;
+  originalPrice?: string; // For strikethrough discount
   priceValue: number;
   image: string;
   level: number;
@@ -30,18 +31,19 @@ type Vehicle = {
   isElite?: boolean;
 };
 
-// TODOS LOS 9 NIVELES CON PRECIOS CORRECTOS
+// TODOS LOS 9 NIVELES CON PRECIOS CORRECTOS + DESCUENTOS
 const allVehicles: Vehicle[] = [
-  { id: 1, name: "Sports Car", price: "€100", priceValue: 100, image: level1Image, level: 1 },
-  { id: 2, name: "Yacht", price: "€200", priceValue: 200, image: level2Image, level: 2 },
-  { id: 3, name: "Helicopter", price: "€300", priceValue: 300, image: level3Image, level: 3 },
-  { id: 4, name: "Private Jet", price: "€400", priceValue: 400, image: level4Image, level: 4 },
-  { id: 5, name: "Luxury Mansion", price: "€500", priceValue: 500, image: level5Image, level: 5 },
-  { id: 6, name: "Luxury Island", price: "€1,000", priceValue: 1000, image: luxuryIslandImage, level: 6 },
+  { id: 1, name: "Sports Car", price: "€100", originalPrice: "€150", priceValue: 100, image: level1Image, level: 1 },
+  { id: 2, name: "Yacht", price: "€200", originalPrice: "€280", priceValue: 200, image: level2Image, level: 2 },
+  { id: 3, name: "Helicopter", price: "€300", originalPrice: "€400", priceValue: 300, image: level3Image, level: 3 },
+  { id: 4, name: "Private Jet", price: "€400", originalPrice: "€550", priceValue: 400, image: level4Image, level: 4 },
+  { id: 5, name: "Luxury Mansion", price: "€500", originalPrice: "€700", priceValue: 500, image: level5Image, level: 5 },
+  { id: 6, name: "Luxury Island", price: "€1,000", originalPrice: "€1,500", priceValue: 1000, image: luxuryIslandImage, level: 6 },
   { 
     id: 7, 
     name: "Private Paradise Island", 
     price: "€5,000", 
+    originalPrice: "€7,500",
     priceValue: 5000,
     image: level7Image, 
     level: 7,
@@ -52,6 +54,7 @@ const allVehicles: Vehicle[] = [
     id: 8, 
     name: "Orbital Space Station", 
     price: "€10,000", 
+    originalPrice: "€15,000",
     priceValue: 10000,
     image: level8Image, 
     level: 8,
@@ -62,6 +65,7 @@ const allVehicles: Vehicle[] = [
     id: 9, 
     name: "Own a Planet", 
     price: "€50,000", 
+    originalPrice: "€75,000",
     priceValue: 50000,
     image: level9Image, 
     level: 9,
@@ -179,6 +183,7 @@ const Garage = () => {
               image={vehicle.image}
               level={vehicle.level}
               price={vehicle.price}
+              originalPrice={vehicle.originalPrice}
               onView={() => navigate(`/vehicle/${vehicle.level}`)}
               onBuy={() => setSelectedVehicle(vehicle)}
               isPurchased={isPurchased(vehicle.level)}
@@ -221,6 +226,7 @@ const Garage = () => {
               image={vehicle.image}
               level={vehicle.level}
               price={vehicle.price}
+              originalPrice={vehicle.originalPrice}
               description={vehicle.description || ""}
               onView={() => navigate(`/vehicle/${vehicle.level}`)}
               onBuy={() => setSelectedVehicle(vehicle)}
