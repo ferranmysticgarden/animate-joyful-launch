@@ -269,11 +269,23 @@ if (!hasReleaseSigningLine) {
   gradle = ensureBuildTypesReleaseSigning(gradle);
 }
 
-// 3) Bump versionCode
+// 3) Set or Bump versionCode
+// Use VERSION_CODE env var to set a specific version, otherwise bump by BUMP_VERSION_CODE (default 1)
+const explicitVersion = process.env.VERSION_CODE ? Number.parseInt(process.env.VERSION_CODE, 10) : null;
 const bump = Number.parseInt(process.env.BUMP_VERSION_CODE ?? "1", 10);
-if (!Number.isNaN(bump) && bump > 0) {
-  const versionCodeRegex = /\bversionCode\s+(\d+)\b/;
-  const m = gradle.match(versionCodeRegex);
+const versionCodeRegex = /\bversionCode\s+(\d+)\b/;
+const m = gradle.match(versionCodeRegex);
+
+if (explicitVersion && !Number.isNaN(explicitVersion)) {
+  // Set explicit version
+  if (m) {
+    gradle = gradle.replace(versionCodeRegex, `versionCode ${explicitVersion}`);
+    console.log(`[android-signing] versionCode set to: ${explicitVersion}`);
+  } else {
+    console.log("[android-signing] versionCode not found; could not set explicit version.");
+  }
+} else if (!Number.isNaN(bump) && bump > 0) {
+  // Bump version
   if (m?.[1]) {
     const current = Number.parseInt(m[1], 10);
     if (!Number.isNaN(current)) {
