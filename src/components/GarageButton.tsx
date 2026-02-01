@@ -26,17 +26,17 @@ export const GarageButton = ({ onClick, text = "START" }: GarageButtonProps) => 
         
         {/* Text with diamonds */}
         <span 
-          className="relative z-10 flex items-center justify-center gap-1 text-primary drop-shadow-[0_0_10px_hsl(var(--primary))]"
+          className="relative z-10 flex items-center justify-center gap-2 text-primary drop-shadow-[0_0_15px_hsl(var(--primary))]"
           style={{ 
-            fontFamily: "'Pinyon Script', cursive",
-            fontSize: "2.5rem",
-            textTransform: "uppercase",
-            letterSpacing: "0.05em",
+            fontFamily: "'Orbitron', sans-serif",
+            fontSize: "1.8rem",
+            fontWeight: 700,
+            letterSpacing: "0.1em",
           }}
         >
-          <span className="text-2xl">💎</span>
-          <span>{text}</span>
-          <span className="text-2xl">💎</span>
+          <span className="text-xl">💎</span>
+          <span>start</span>
+          <span className="text-xl">💎</span>
         </span>
       </Button>
     </div>
