@@ -58,11 +58,11 @@ export const PurchaseNotification = () => {
   if (!show) return null;
 
   return (
-    <div className="fixed bottom-24 left-4 z-50 animate-[slide-in-right_0.5s_ease-out] max-w-xs">
-      <div className="bg-black/90 backdrop-blur-sm border border-primary/30 rounded-lg p-3 shadow-[0_0_20px_rgba(255,215,0,0.3)]">
+    <div className="fixed bottom-4 left-4 z-20 animate-[slide-in-right_0.5s_ease-out] max-w-[220px] pointer-events-none">
+      <div className="pointer-events-auto bg-background/90 backdrop-blur-sm border border-primary/30 rounded-lg p-3" style={{ boxShadow: "var(--shadow-elite)" }}>
         <button 
           onClick={() => setShow(false)}
-          className="absolute -top-2 -right-2 bg-black/80 rounded-full p-1 border border-primary/30"
+          className="absolute -top-2 -right-2 bg-background/80 rounded-full p-1 border border-primary/30"
         >
           <X size={12} className="text-primary" />
         </button>
@@ -71,7 +71,7 @@ export const PurchaseNotification = () => {
             <ShoppingCart size={20} className="text-primary" />
           </div>
           <div className="text-sm">
-            <p className="text-white font-semibold">{notification.name}</p>
+            <p className="text-secondary-foreground font-semibold">{notification.name}</p>
             <p className="text-primary/80 text-xs">
               from {notification.city} just bought
             </p>
