@@ -132,10 +132,9 @@ const Index = () => {
         <DonationProgress />
       </div>
 
-      <GarageButton onClick={handleGarageClick} text="ENTER THE GARAGE 🚀" />
-
-      {/* Spacer for fixed button */}
-      <div className="h-40" />
+      <div className="relative z-10">
+        <GarageButton onClick={handleGarageClick} text="ENTER THE GARAGE 🚀" />
+      </div>
 
       <footer className="relative z-10 container mx-auto px-4 py-6 border-t border-primary/20 bg-black/40">
         <div className="flex flex-col md:flex-row justify-center items-center gap-4 text-sm text-muted-foreground">
