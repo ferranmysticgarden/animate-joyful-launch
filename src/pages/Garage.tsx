@@ -232,6 +232,7 @@ const Garage = () => {
               onView={() => navigate(`/vehicle/${vehicle.level}`)}
               onBuy={() => setSelectedVehicle(vehicle)}
               isPurchased={isPurchased(vehicle.level)}
+              isNew={vehicle.level >= 7}
             />
           ))}
         </div>

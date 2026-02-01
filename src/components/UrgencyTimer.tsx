@@ -39,23 +39,30 @@ export const UrgencyTimer = () => {
   const pad = (n: number) => n.toString().padStart(2, '0');
 
   return (
-    <div className="flex items-center justify-center gap-2 py-2 px-4 bg-gradient-to-r from-red-900/80 to-orange-900/80 border-y border-red-500/30">
-      <Flame size={18} className="text-orange-400 animate-pulse" />
-      <span className="text-white text-sm font-semibold">SPECIAL OFFER ENDS IN:</span>
-      <div className="flex items-center gap-1 font-mono">
-        <span className="bg-black/50 px-2 py-1 rounded text-orange-400 font-bold">
-          {pad(timeLeft.hours)}
-        </span>
-        <span className="text-orange-400">:</span>
-        <span className="bg-black/50 px-2 py-1 rounded text-orange-400 font-bold">
-          {pad(timeLeft.minutes)}
-        </span>
-        <span className="text-orange-400">:</span>
-        <span className="bg-black/50 px-2 py-1 rounded text-orange-400 font-bold">
-          {pad(timeLeft.seconds)}
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-red-900/90 to-orange-900/90 border-y border-red-500/40">
+      <div className="flex items-center gap-2">
+        <Flame size={20} className="text-orange-400 animate-pulse" />
+        <span className="text-white text-sm font-bold uppercase tracking-wide">
+          🔥 33% OFF - LIMITED TIME 🔥
         </span>
       </div>
-      <Clock size={16} className="text-orange-400" />
+      <div className="flex items-center gap-2">
+        <span className="text-orange-300 text-xs">Ends in:</span>
+        <div className="flex items-center gap-1 font-mono">
+          <span className="bg-black/60 px-2 py-1 rounded text-orange-400 font-bold text-lg">
+            {pad(timeLeft.hours)}
+          </span>
+          <span className="text-orange-400 text-lg">:</span>
+          <span className="bg-black/60 px-2 py-1 rounded text-orange-400 font-bold text-lg">
+            {pad(timeLeft.minutes)}
+          </span>
+          <span className="text-orange-400 text-lg">:</span>
+          <span className="bg-black/60 px-2 py-1 rounded text-orange-400 font-bold text-lg">
+            {pad(timeLeft.seconds)}
+          </span>
+        </div>
+        <Clock size={18} className="text-orange-400" />
+      </div>
     </div>
   );
 };
