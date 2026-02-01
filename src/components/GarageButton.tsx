@@ -8,7 +8,7 @@ export const GarageButton = ({ onClick, text = "Start" }: GarageButtonProps) => 
     <div className="relative z-50 py-10 flex justify-center px-4">
       <button
         onClick={onClick}
-        className="relative w-full max-w-[340px] md:max-w-[420px] h-20 md:h-24 px-6 md:px-8 bg-background/95 hover:bg-background hover:scale-105 transition-transform duration-300 rounded-full border-[3px] border-primary overflow-visible"
+        className="relative w-full max-w-[360px] md:max-w-[460px] h-24 md:h-28 px-8 md:px-10 bg-background/95 hover:bg-background hover:scale-105 transition-transform duration-300 rounded-full border-[3px] border-primary overflow-visible"
         style={{
           boxShadow: "var(--shadow-mega)",
         }}
@@ -28,11 +28,12 @@ export const GarageButton = ({ onClick, text = "Start" }: GarageButtonProps) => 
             style={{
               fontFamily: "'Pinyon Script', cursive",
               backgroundImage: "var(--gradient-gold-metal-text)",
-              fontSize: "clamp(2.25rem, 6vw, 3rem)",
-              lineHeight: 1.15,
-              paddingBottom: "0.1em",
+              fontSize: "clamp(2.4rem, 6vw, 3.2rem)",
+              display: "inline-block",
+              lineHeight: 1.25,
+              padding: "0.12em 0.2em 0.18em",
               filter:
-                "drop-shadow(0 0 14px hsl(var(--primary) / 0.85)) drop-shadow(0 2px 10px hsl(0 0% 0% / 0.7))",
+                "drop-shadow(0 0 18px hsl(var(--primary) / 0.95)) drop-shadow(0 3px 12px hsl(0 0% 0% / 0.75))",
               letterSpacing: "0.02em",
             }}
           >

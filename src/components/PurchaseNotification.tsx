@@ -58,7 +58,7 @@ export const PurchaseNotification = () => {
   if (!show) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 z-20 animate-[slide-in-right_0.5s_ease-out] max-w-[220px] pointer-events-none">
+    <div className="fixed top-28 left-4 z-20 animate-[slide-in-right_0.5s_ease-out] max-w-[220px] pointer-events-none">
       <div className="pointer-events-auto bg-background/90 backdrop-blur-sm border border-primary/30 rounded-lg p-3" style={{ boxShadow: "var(--shadow-elite)" }}>
         <button 
           onClick={() => setShow(false)}
