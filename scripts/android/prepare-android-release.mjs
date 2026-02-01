@@ -3,6 +3,7 @@
 // - Writes android/keystore.properties based on env vars
 // - Ensures android/app/build.gradle uses signingConfigs.release
 // - Increments versionCode (default +1; set BUMP_VERSION_CODE=0 to disable)
+// - Adds BILLING permission to AndroidManifest.xml for Google Play In-App Purchases
 
 import fs from "fs";
 import path from "path";
@@ -10,6 +11,7 @@ import path from "path";
 const projectRoot = process.cwd();
 const androidDir = path.join(projectRoot, "android");
 const androidAppDir = path.join(androidDir, "app");
+const manifestPath = path.join(androidAppDir, "src", "main", "AndroidManifest.xml");
 
 const gradleGroovyPath = path.join(androidDir, "app", "build.gradle");
 const gradleKtsPath = path.join(androidDir, "app", "build.gradle.kts");
@@ -17,6 +19,38 @@ const gradleKtsPath = path.join(androidDir, "app", "build.gradle.kts");
 function fail(message) {
   console.error(`[android-signing] ${message}`);
   process.exit(1);
+}
+
+// Add BILLING permission to AndroidManifest.xml
+function ensureBillingPermission() {
+  if (!fs.existsSync(manifestPath)) {
+    console.log("[android-signing] AndroidManifest.xml not found, skipping BILLING permission.");
+    return;
+  }
+
+  let manifest = fs.readFileSync(manifestPath, "utf8");
+  const billingPermission = 'android.name="com.android.vending.BILLING"';
+  const billingPermissionFull = '<uses-permission android:name="com.android.vending.BILLING" />';
+
+  if (manifest.includes("com.android.vending.BILLING")) {
+    console.log("[android-signing] BILLING permission already present.");
+    return;
+  }
+
+  // Insert after <manifest ...> opening tag
+  const manifestTagEnd = manifest.indexOf(">", manifest.indexOf("<manifest"));
+  if (manifestTagEnd === -1) {
+    console.log("[android-signing] Could not find <manifest> tag, skipping BILLING permission.");
+    return;
+  }
+
+  manifest = 
+    manifest.slice(0, manifestTagEnd + 1) + 
+    "\n    " + billingPermissionFull + 
+    manifest.slice(manifestTagEnd + 1);
+
+  fs.writeFileSync(manifestPath, manifest, "utf8");
+  console.log("[android-signing] ✅ Added BILLING permission to AndroidManifest.xml");
 }
 
 function normalizeToForwardSlashes(p) {
@@ -115,6 +149,9 @@ function ensureReleaseSigningConfigUsesKeystoreProperties(gradleText) {
 if (!fs.existsSync(androidDir)) {
   fail('Missing "android" folder. Run "npx cap sync android" (or "npx cap add android") first.');
 }
+
+// 0) Add BILLING permission for Google Play In-App Purchases
+ensureBillingPermission();
 
 // 1) Write keystore.properties (NO logging of secret values)
 const keystorePathFromRoot = process.env.KEYSTORE_PATH || "release-key.jks";
