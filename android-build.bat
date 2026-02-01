@@ -5,14 +5,31 @@ cd /d "%~dp0"
 REM ===========================================
 REM LUXURY LIFE - Android AAB Build Script (Windows)
 REM ===========================================
+REM
+REM PARA EL NUEVO UPLOAD KEY (después del 1 Feb 2026 19:24 UTC):
+REM   set KEYSTORE_PATH=upload-keystore.jks
+REM   set KEYSTORE_ALIAS=upload
+REM   set KEYSTORE_PASSWORD=luxury1234
+REM   set KEYSTORE_ALIAS_PASSWORD=luxury1234
+REM   android-build.bat
+REM
+REM PARA EL KEY ORIGINAL:
+REM   set KEYSTORE_PASSWORD=luxury1234
+REM   set KEYSTORE_ALIAS_PASSWORD=luxury1234
+REM   android-build.bat
+REM
+REM PARA FORZAR VERSION CODE:
+REM   set VERSION_CODE=15
+REM   android-build.bat
+REM ===========================================
 
 echo.
 echo 🚀 Luxury Life - Build AAB para Google Play
 echo ============================================
 echo.
 
-REM Check if keystore exists
-if not exist "release-key.jks" (
+REM Check if any keystore exists
+if not exist "release-key.jks" if not exist "upload-keystore.jks" (
     echo.
     echo ⚠️  No se encontró keystore. Creando uno nuevo...
     echo.

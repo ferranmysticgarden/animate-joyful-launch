@@ -109,6 +109,9 @@ const Index = () => {
               <p className="text-base md:text-lg text-primary animate-pulse-gold font-semibold">
                 💎 Your status. Your rules.
               </p>
+              <p className="text-sm text-red-400 animate-pulse font-bold mt-2">
+                🔥 Only 47 spots left at this price 🔥
+              </p>
             </div>
           )}
         </div>
@@ -129,7 +132,7 @@ const Index = () => {
         <DonationProgress />
       </div>
 
-      <GarageButton onClick={handleGarageClick} text="PLAY" />
+      <GarageButton onClick={handleGarageClick} text="ENTER THE GARAGE 🚀" />
 
       {/* Spacer for fixed button */}
       <div className="h-40" />
