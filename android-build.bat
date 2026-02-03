@@ -24,8 +24,8 @@ echo ============================================
 echo.
 
 REM Defaults (sin contraseñas hardcodeadas)
-if "%KEYSTORE_PATH%"=="" set KEYSTORE_PATH=upload-keystore.jks
-if "%KEYSTORE_ALIAS%"=="" set KEYSTORE_ALIAS=upload
+if "%KEYSTORE_PATH%"=="" set KEYSTORE_PATH=release-key.jks
+if "%KEYSTORE_ALIAS%"=="" set KEYSTORE_ALIAS=luxury-life
 
 if "%KEYSTORE_PASSWORD%"=="" (
     echo.
