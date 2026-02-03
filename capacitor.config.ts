@@ -11,9 +11,9 @@ const config: CapacitorConfig = {
   },
   android: {
     buildOptions: {
-      keystorePath: process.env.KEYSTORE_PATH || 'release-key.jks',
+      keystorePath: process.env.KEYSTORE_PATH || 'upload-keystore.jks',
       keystorePassword: process.env.KEYSTORE_PASSWORD,
-      keystoreAlias: process.env.KEYSTORE_ALIAS || 'luxury-life',
+      keystoreAlias: process.env.KEYSTORE_ALIAS || 'upload',
       keystoreAliasPassword: process.env.KEYSTORE_ALIAS_PASSWORD,
     }
   }

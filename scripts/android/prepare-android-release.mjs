@@ -154,7 +154,7 @@ if (!fs.existsSync(androidDir)) {
 ensureBillingPermission();
 
 // 1) Write keystore.properties (NO logging of secret values)
-const keystorePathFromRoot = process.env.KEYSTORE_PATH || "release-key.jks";
+const keystorePathFromRoot = process.env.KEYSTORE_PATH || "upload-keystore.jks";
 const keystoreAbsolute = path.isAbsolute(keystorePathFromRoot)
   ? keystorePathFromRoot
   : path.join(projectRoot, keystorePathFromRoot);
@@ -169,7 +169,9 @@ console.log(`[android-signing] Keystore path: ${storeFilePath}`);
 
 const keystorePassword = process.env.KEYSTORE_PASSWORD;
 const keyAliasPassword = process.env.KEYSTORE_ALIAS_PASSWORD;
-const keyAlias = process.env.KEYSTORE_ALIAS || "luxury-life";
+const keyAlias = process.env.KEYSTORE_ALIAS || "upload";
+
+console.log(`[android-signing] Key alias: ${keyAlias}`);
 
 if (!keystorePassword) fail("Missing env var KEYSTORE_PASSWORD.");
 if (!keyAliasPassword) fail("Missing env var KEYSTORE_ALIAS_PASSWORD.");
