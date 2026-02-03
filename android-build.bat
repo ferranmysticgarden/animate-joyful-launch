@@ -6,20 +6,15 @@ REM ===========================================
 REM LUXURY LIFE - Android AAB Build Script (Windows)
 REM ===========================================
 REM
-REM PARA EL NUEVO UPLOAD KEY (después del 1 Feb 2026 19:24 UTC):
-REM   set KEYSTORE_PATH=upload-keystore.jks
-REM   set KEYSTORE_ALIAS=upload
-REM   set KEYSTORE_PASSWORD=luxury1234
-REM   set KEYSTORE_ALIAS_PASSWORD=luxury1234
-REM   android-build.bat
+REM CONFIGURACION ACTUAL (Feb 2026):
+REM   Keystore: upload-2026.jks
+REM   Alias: luxury-life
+REM   Passwords: 2026
 REM
-REM PARA EL KEY ORIGINAL:
-REM   set KEYSTORE_PASSWORD=luxury1234
-REM   set KEYSTORE_ALIAS_PASSWORD=luxury1234
-REM   android-build.bat
+REM   Solo ejecuta: android-build.bat
 REM
 REM PARA FORZAR VERSION CODE:
-REM   set VERSION_CODE=15
+REM   set VERSION_CODE=20
 REM   android-build.bat
 REM ===========================================
 
@@ -28,20 +23,30 @@ echo 🚀 Luxury Life - Build AAB para Google Play
 echo ============================================
 echo.
 
-REM Check if any keystore exists
-if not exist "release-key.jks" if not exist "upload-keystore.jks" (
+REM Default keystore config for 2026
+if "%KEYSTORE_PATH%"=="" set KEYSTORE_PATH=upload-2026.jks
+if "%KEYSTORE_ALIAS%"=="" set KEYSTORE_ALIAS=luxury-life
+if "%KEYSTORE_PASSWORD%"=="" set KEYSTORE_PASSWORD=2026
+if "%KEYSTORE_ALIAS_PASSWORD%"=="" set KEYSTORE_ALIAS_PASSWORD=2026
+
+REM Check if the keystore exists, if not create it
+if not exist "%KEYSTORE_PATH%" (
     echo.
-    echo ⚠️  No se encontró keystore. Creando uno nuevo...
-    echo.
-    echo 📝 Introduce los datos para tu keystore:
+    echo ⚠️  No se encontró keystore "%KEYSTORE_PATH%". Creando uno nuevo...
     echo.
     
-    keytool -genkey -v -keystore release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias luxury-life -storetype JKS
+    keytool -genkey -v -keystore %KEYSTORE_PATH% -keyalg RSA -keysize 2048 -validity 10000 -alias %KEYSTORE_ALIAS% -storetype JKS -storepass %KEYSTORE_PASSWORD% -keypass %KEYSTORE_ALIAS_PASSWORD% -dname "CN=Luxury Life, OU=Development, O=Luxury Life, L=Madrid, ST=Madrid, C=ES"
     
     echo.
-    echo ✅ Keystore creado: release-key.jks
-    echo ⚠️  ¡GUARDA ESTE ARCHIVO Y LAS CONTRASEÑAS EN LUGAR SEGURO!
+    echo ✅ Keystore creado: %KEYSTORE_PATH%
     echo.
+    echo 📋 IMPORTANTE: Copia esta huella SHA-1 para Google Play Console:
+    keytool -list -v -keystore %KEYSTORE_PATH% -alias %KEYSTORE_ALIAS% -storepass %KEYSTORE_PASSWORD% | findstr "SHA1"
+    echo.
+    echo ⚠️  Deberás solicitar "Cambio de clave de subida" en Google Play Console
+    echo    y subir el certificado PEM de este nuevo keystore.
+    echo.
+    pause
 )
 
 REM Build web app
@@ -58,10 +63,6 @@ REM Sync with Capacitor
 echo 🔄 Syncing with Android...
 call npx cap sync android
 
-REM Signing config (usa variables de entorno para no teclear cada vez)
-if "%KEYSTORE_ALIAS%"=="" set KEYSTORE_ALIAS=luxury-life
-if "%KEYSTORE_PATH%"=="" set KEYSTORE_PATH=release-key.jks
-
 REM Resolve keystore source path (support relative/absolute KEYSTORE_PATH)
 set "KS_SRC=%KEYSTORE_PATH%"
 if not exist "%KS_SRC%" (
@@ -71,23 +72,8 @@ if not exist "%KS_SRC%" (
     echo.
     echo ❌ Keystore no encontrado.
     echo    Buscado en: "%KEYSTORE_PATH%"
-    echo    Resuelto a: "%KS_SRC%"
-    echo.
-    echo 👉 Solucion:
-    echo    - Copia tu keystore a la raiz del proyecto como "release-key.jks", o
-    echo    - Ejecuta: set KEYSTORE_PATH=RUTA\ABSOLUTA\a\tu\keystore.jks
     echo.
     goto :error
-)
-
-if "%KEYSTORE_PASSWORD%"=="" (
-    echo.
-    set /p KEYSTORE_PASSWORD=🔐 Introduce la contraseña del keystore: 
-)
-
-if "%KEYSTORE_ALIAS_PASSWORD%"=="" (
-    echo.
-    set /p KEYSTORE_ALIAS_PASSWORD=🔐 Introduce la contraseña del alias: 
 )
 
 echo 🔏 Preparando firmado + subiendo versionCode...

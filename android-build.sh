@@ -3,29 +3,54 @@
 # ===========================================
 # LUXURY LIFE - Android AAB Build Script
 # ===========================================
+#
+# CONFIGURACION ACTUAL (Feb 2026):
+#   Keystore: upload-2026.jks
+#   Alias: luxury-life
+#   Passwords: 2026
+#
+#   Solo ejecuta: ./android-build.sh
+#
+# PARA FORZAR VERSION CODE:
+#   VERSION_CODE=20 ./android-build.sh
+# ===========================================
 
 echo "🚀 Luxury Life - Build AAB para Google Play"
 echo "============================================"
 
-# Check if keystore exists
-if [ ! -f "release-key.jks" ]; then
+# Default keystore config for 2026
+export KEYSTORE_PATH="${KEYSTORE_PATH:-upload-2026.jks}"
+export KEYSTORE_ALIAS="${KEYSTORE_ALIAS:-luxury-life}"
+export KEYSTORE_PASSWORD="${KEYSTORE_PASSWORD:-2026}"
+export KEYSTORE_ALIAS_PASSWORD="${KEYSTORE_ALIAS_PASSWORD:-2026}"
+
+# Check if keystore exists, if not create it
+if [ ! -f "$KEYSTORE_PATH" ]; then
     echo ""
-    echo "⚠️  No se encontró keystore. Creando uno nuevo..."
+    echo "⚠️  No se encontró keystore '$KEYSTORE_PATH'. Creando uno nuevo..."
     echo ""
-    echo "📝 Introduce los datos para tu keystore:"
     
     keytool -genkey -v \
-        -keystore release-key.jks \
+        -keystore "$KEYSTORE_PATH" \
         -keyalg RSA \
         -keysize 2048 \
         -validity 10000 \
-        -alias luxury-life \
-        -storetype JKS
+        -alias "$KEYSTORE_ALIAS" \
+        -storetype JKS \
+        -storepass "$KEYSTORE_PASSWORD" \
+        -keypass "$KEYSTORE_ALIAS_PASSWORD" \
+        -dname "CN=Luxury Life, OU=Development, O=Luxury Life, L=Madrid, ST=Madrid, C=ES"
     
     echo ""
-    echo "✅ Keystore creado: release-key.jks"
-    echo "⚠️  ¡GUARDA ESTE ARCHIVO Y LAS CONTRASEÑAS EN LUGAR SEGURO!"
+    echo "✅ Keystore creado: $KEYSTORE_PATH"
     echo ""
+    echo "📋 IMPORTANTE: Copia esta huella SHA-1 para Google Play Console:"
+    keytool -list -v -keystore "$KEYSTORE_PATH" -alias "$KEYSTORE_ALIAS" -storepass "$KEYSTORE_PASSWORD" | grep "SHA1"
+    echo ""
+    echo "⚠️  Deberás solicitar 'Cambio de clave de subida' en Google Play Console"
+    echo "   y subir el certificado PEM de este nuevo keystore."
+    echo ""
+    read -p "Pulsa Enter para continuar..."
 fi
 
 # Build web app
@@ -42,24 +67,6 @@ fi
 echo "🔄 Syncing with Android..."
 npx cap sync android
 
-# Signing config (usa variables de entorno para no teclear cada vez)
-export KEYSTORE_ALIAS="${KEYSTORE_ALIAS:-luxury-life}"
-export KEYSTORE_PATH="${KEYSTORE_PATH:-release-key.jks}"
-
-if [ -z "${KEYSTORE_PASSWORD:-}" ]; then
-  echo ""
-  echo "🔐 Introduce la contraseña del keystore:"
-  read -s KEYSTORE_PASSWORD
-  export KEYSTORE_PASSWORD
-fi
-
-if [ -z "${KEYSTORE_ALIAS_PASSWORD:-}" ]; then
-  echo ""
-  echo "🔐 Introduce la contraseña del alias:"
-  read -s KEYSTORE_ALIAS_PASSWORD
-  export KEYSTORE_ALIAS_PASSWORD
-fi
-
 echo "🔏 Preparando firmado + subiendo versionCode..."
 node scripts/android/prepare-android-release.mjs
 
@@ -68,6 +75,11 @@ echo "🏗️  Building AAB..."
 cd android
 ./gradlew bundleRelease
 
+if [ $? -ne 0 ]; then
+    echo ""
+    echo "❌ Error en el build. Revisa el mensaje anterior."
+    exit 1
+fi
 
 cd ..
 
@@ -79,10 +91,8 @@ echo "============================================"
 
 # Abrir carpeta con el AAB
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    # Mac
     open android/app/build/outputs/bundle/release/
 else
-    # Linux
     xdg-open android/app/build/outputs/bundle/release/
 fi
 
