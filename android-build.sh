@@ -19,8 +19,8 @@ echo "🚀 Luxury Life - Build AAB para Google Play"
 echo "============================================"
 
 # Defaults (sin contraseñas hardcodeadas)
-export KEYSTORE_PATH="${KEYSTORE_PATH:-upload-keystore.jks}"
-export KEYSTORE_ALIAS="${KEYSTORE_ALIAS:-upload}"
+export KEYSTORE_PATH="${KEYSTORE_PATH:-release-key.jks}"
+export KEYSTORE_ALIAS="${KEYSTORE_ALIAS:-luxury-life}"
 
 if [ -z "$KEYSTORE_PASSWORD" ]; then
   echo "❌ Falta KEYSTORE_PASSWORD (ej: export KEYSTORE_PASSWORD=tu_password)"
