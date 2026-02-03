@@ -6,10 +6,10 @@ REM ===========================================
 REM LUXURY LIFE - Android AAB Build Script (Windows)
 REM ===========================================
 REM
-REM CONFIGURACION ACTUAL (Feb 2026):
-REM   Keystore: upload-2026.jks
-REM   Alias: luxury-life
-REM   Passwords: 2026
+REM CONFIGURACION RECOMENDADA (Google Play Upload Key):
+REM   Keystore: upload-keystore.jks
+REM   Alias: upload
+REM   Passwords: (NO se guardan aqui; usar variables de entorno)
 REM
 REM   Solo ejecuta: android-build.bat
 REM
@@ -23,30 +23,32 @@ echo 🚀 Luxury Life - Build AAB para Google Play
 echo ============================================
 echo.
 
-REM Default keystore config for 2026
-if "%KEYSTORE_PATH%"=="" set KEYSTORE_PATH=upload-2026.jks
-if "%KEYSTORE_ALIAS%"=="" set KEYSTORE_ALIAS=luxury-life
-if "%KEYSTORE_PASSWORD%"=="" set KEYSTORE_PASSWORD=2026
-if "%KEYSTORE_ALIAS_PASSWORD%"=="" set KEYSTORE_ALIAS_PASSWORD=2026
+REM Defaults (sin contraseñas hardcodeadas)
+if "%KEYSTORE_PATH%"=="" set KEYSTORE_PATH=upload-keystore.jks
+if "%KEYSTORE_ALIAS%"=="" set KEYSTORE_ALIAS=upload
 
-REM Check if the keystore exists, if not create it
+if "%KEYSTORE_PASSWORD%"=="" (
+    echo.
+    echo ❌ Falta KEYSTORE_PASSWORD.
+    echo    Ejemplo: set KEYSTORE_PASSWORD=tu_password
+    echo.
+    goto :error
+)
+if "%KEYSTORE_ALIAS_PASSWORD%"=="" (
+    echo.
+    echo ❌ Falta KEYSTORE_ALIAS_PASSWORD.
+    echo    Ejemplo: set KEYSTORE_ALIAS_PASSWORD=tu_password
+    echo.
+    goto :error
+)
+
+REM El keystore DEBE existir (no autogeneramos uno, para no romper el SHA1 de Google Play)
 if not exist "%KEYSTORE_PATH%" (
     echo.
-    echo ⚠️  No se encontró keystore "%KEYSTORE_PATH%". Creando uno nuevo...
+    echo ❌ No se encontró el keystore "%KEYSTORE_PATH%".
+    echo    Colócalo en la raiz del proyecto o define KEYSTORE_PATH con su ruta.
     echo.
-    
-    keytool -genkey -v -keystore %KEYSTORE_PATH% -keyalg RSA -keysize 2048 -validity 10000 -alias %KEYSTORE_ALIAS% -storetype JKS -storepass %KEYSTORE_PASSWORD% -keypass %KEYSTORE_ALIAS_PASSWORD% -dname "CN=Luxury Life, OU=Development, O=Luxury Life, L=Madrid, ST=Madrid, C=ES"
-    
-    echo.
-    echo ✅ Keystore creado: %KEYSTORE_PATH%
-    echo.
-    echo 📋 IMPORTANTE: Copia esta huella SHA-1 para Google Play Console:
-    keytool -list -v -keystore %KEYSTORE_PATH% -alias %KEYSTORE_ALIAS% -storepass %KEYSTORE_PASSWORD% | findstr "SHA1"
-    echo.
-    echo ⚠️  Deberás solicitar "Cambio de clave de subida" en Google Play Console
-    echo    y subir el certificado PEM de este nuevo keystore.
-    echo.
-    pause
+    goto :error
 )
 
 REM Build web app
@@ -68,6 +70,23 @@ set "KS_SRC=%KEYSTORE_PATH%"
 if not exist "%KS_SRC%" (
     if exist "%~dp0%KEYSTORE_PATH%" set "KS_SRC=%~dp0%KEYSTORE_PATH%"
 )
+
+REM Copy keystore to android/app and force signing to use this exact file
+if not exist "android\app" (
+    echo.
+    echo ❌ No se encontró la carpeta "android\app".
+    echo    Asegúrate de que "npx cap sync android" haya terminado bien.
+    echo.
+    goto :error
+)
+
+echo 📋 Copiando keystore a android\app\release-key.jks...
+copy /Y "%KS_SRC%" "android\app\release-key.jks"
+if errorlevel 1 goto :error
+if not exist "android\app\release-key.jks" goto :error
+
+REM Make prepare script point to the copied keystore (most reliable)
+set "KEYSTORE_PATH=android/app/release-key.jks"
 if not exist "%KS_SRC%" (
     echo.
     echo ❌ Keystore no encontrado.
@@ -79,20 +98,6 @@ if not exist "%KS_SRC%" (
 echo 🔏 Preparando firmado + subiendo versionCode...
 node scripts\android\prepare-android-release.mjs
 if errorlevel 1 goto :error
-
-REM Copy keystore to android/app as fallback for relative path resolution
-if not exist "android\app" (
-    echo.
-    echo ❌ No se encontró la carpeta "android\app".
-    echo    Asegúrate de que "npx cap sync android" haya terminado bien.
-    echo.
-    goto :error
-)
-
-echo 📋 Copiando keystore a android\app...
-copy /Y "%KS_SRC%" "android\app\release-key.jks"
-if errorlevel 1 goto :error
-if not exist "android\app\release-key.jks" goto :error
 
 REM Build AAB
 echo 🏗️  Building AAB...

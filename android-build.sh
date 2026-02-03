@@ -4,10 +4,10 @@
 # LUXURY LIFE - Android AAB Build Script
 # ===========================================
 #
-# CONFIGURACION ACTUAL (Feb 2026):
-#   Keystore: upload-2026.jks
-#   Alias: luxury-life
-#   Passwords: 2026
+# CONFIGURACION RECOMENDADA (Google Play Upload Key):
+#   Keystore: upload-keystore.jks
+#   Alias: upload
+#   Passwords: (NO se guardan aqui; usar variables de entorno)
 #
 #   Solo ejecuta: ./android-build.sh
 #
@@ -18,39 +18,25 @@
 echo "🚀 Luxury Life - Build AAB para Google Play"
 echo "============================================"
 
-# Default keystore config for 2026
-export KEYSTORE_PATH="${KEYSTORE_PATH:-upload-2026.jks}"
-export KEYSTORE_ALIAS="${KEYSTORE_ALIAS:-luxury-life}"
-export KEYSTORE_PASSWORD="${KEYSTORE_PASSWORD:-2026}"
-export KEYSTORE_ALIAS_PASSWORD="${KEYSTORE_ALIAS_PASSWORD:-2026}"
+# Defaults (sin contraseñas hardcodeadas)
+export KEYSTORE_PATH="${KEYSTORE_PATH:-upload-keystore.jks}"
+export KEYSTORE_ALIAS="${KEYSTORE_ALIAS:-upload}"
 
-# Check if keystore exists, if not create it
+if [ -z "$KEYSTORE_PASSWORD" ]; then
+  echo "❌ Falta KEYSTORE_PASSWORD (ej: export KEYSTORE_PASSWORD=tu_password)"
+  exit 1
+fi
+
+if [ -z "$KEYSTORE_ALIAS_PASSWORD" ]; then
+  echo "❌ Falta KEYSTORE_ALIAS_PASSWORD (ej: export KEYSTORE_ALIAS_PASSWORD=tu_password)"
+  exit 1
+fi
+
+# El keystore DEBE existir (no autogeneramos uno, para no romper el SHA1 de Google Play)
 if [ ! -f "$KEYSTORE_PATH" ]; then
-    echo ""
-    echo "⚠️  No se encontró keystore '$KEYSTORE_PATH'. Creando uno nuevo..."
-    echo ""
-    
-    keytool -genkey -v \
-        -keystore "$KEYSTORE_PATH" \
-        -keyalg RSA \
-        -keysize 2048 \
-        -validity 10000 \
-        -alias "$KEYSTORE_ALIAS" \
-        -storetype JKS \
-        -storepass "$KEYSTORE_PASSWORD" \
-        -keypass "$KEYSTORE_ALIAS_PASSWORD" \
-        -dname "CN=Luxury Life, OU=Development, O=Luxury Life, L=Madrid, ST=Madrid, C=ES"
-    
-    echo ""
-    echo "✅ Keystore creado: $KEYSTORE_PATH"
-    echo ""
-    echo "📋 IMPORTANTE: Copia esta huella SHA-1 para Google Play Console:"
-    keytool -list -v -keystore "$KEYSTORE_PATH" -alias "$KEYSTORE_ALIAS" -storepass "$KEYSTORE_PASSWORD" | grep "SHA1"
-    echo ""
-    echo "⚠️  Deberás solicitar 'Cambio de clave de subida' en Google Play Console"
-    echo "   y subir el certificado PEM de este nuevo keystore."
-    echo ""
-    read -p "Pulsa Enter para continuar..."
+  echo "❌ No se encontró el keystore '$KEYSTORE_PATH'."
+  echo "   Colócalo en la raiz del proyecto o define KEYSTORE_PATH con su ruta."
+  exit 1
 fi
 
 # Build web app
@@ -66,6 +52,17 @@ fi
 # Sync with Capacitor
 echo "🔄 Syncing with Android..."
 npx cap sync android
+
+# Copiamos el keystore al proyecto Android y forzamos que el firmado use este fichero
+if [ ! -d "android/app" ]; then
+  echo "❌ No se encontró android/app. ¿Falló npx cap sync android?"
+  exit 1
+fi
+
+echo "📋 Copiando keystore a android/app/release-key.jks..."
+cp -f "$KEYSTORE_PATH" "android/app/release-key.jks"
+
+export KEYSTORE_PATH="android/app/release-key.jks"
 
 echo "🔏 Preparando firmado + subiendo versionCode..."
 node scripts/android/prepare-android-release.mjs
