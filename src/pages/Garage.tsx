@@ -4,7 +4,7 @@ import { EliteVehicleCard } from "@/components/EliteVehicleCard";
 import { PurchaseModal } from "@/components/PurchaseModal";
 import { EpicCelebration, playCelebrationSound } from "@/components/EpicCelebration";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, RotateCcw, PartyPopper } from "lucide-react";
+import { ArrowLeft, RotateCcw } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { usePurchases } from "@/hooks/usePurchases";
 import { usePurchaseHandler } from "@/hooks/usePurchaseHandler";
@@ -150,19 +150,6 @@ const Garage = () => {
           </Button>
 
           <div className="flex gap-2">
-            {/* Preview celebration button */}
-            <Button
-              onClick={() => {
-                playCelebrationSound();
-                setShowCelebration(true);
-              }}
-              variant="ghost"
-              className="text-primary hover:text-primary/80"
-              title="Preview celebration"
-            >
-              <PartyPopper className="mr-2 h-4 w-4" />
-              🎉 Preview
-            </Button>
 
             {isNative && (
               <Button
