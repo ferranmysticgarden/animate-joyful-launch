@@ -42,13 +42,13 @@ const allVehicles: Vehicle[] = [
   { id: 6, name: "Luxury Island", price: "€1,000", originalPrice: "€1,500", priceValue: 1000, image: luxuryIslandImage, level: 6 },
   { 
     id: 7, 
-    name: "Private Paradise Island", 
+    name: "Private Archipelago", 
     price: "€5,000", 
     originalPrice: "€7,500",
     priceValue: 5000,
     image: level7Image, 
     level: 7,
-    description: "Un lugar que no existe en los mapas. Solo para ti.",
+    description: "Not one island. A private archipelago. Multiple exclusive islands under your absolute control.",
     isElite: true
   },
   { 
