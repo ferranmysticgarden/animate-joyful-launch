@@ -11,7 +11,7 @@ interface CelebrationPiece {
 }
 
 // Procedural celebration sound using Web Audio API
-const playCelebrationSound = () => {
+export const playCelebrationSound = () => {
   try {
     const ctx = new AudioContext();
 
@@ -85,6 +85,16 @@ export const EpicCelebration = ({ show, onComplete }: { show: boolean; onComplet
   const [pieces, setPieces] = useState<CelebrationPiece[]>([]);
   const [showOverlay, setShowOverlay] = useState(false);
   const [champagnePhase, setChampagnePhase] = useState(false);
+  const [soundPlayed, setSoundPlayed] = useState(false);
+
+  // Play sound on first render when show becomes true
+  // We need a separate mechanism since useEffect loses user gesture context
+  const triggerSound = useCallback(() => {
+    if (!soundPlayed) {
+      playCelebrationSound();
+      setSoundPlayed(true);
+    }
+  }, [soundPlayed]);
 
   useEffect(() => {
     if (show) {
@@ -107,8 +117,6 @@ export const EpicCelebration = ({ show, onComplete }: { show: boolean; onComplet
       setPieces(newPieces);
       setShowOverlay(true);
       setChampagnePhase(true);
-
-      playCelebrationSound();
 
       const champTimer = setTimeout(() => setChampagnePhase(false), 2000);
       const endTimer = setTimeout(() => {

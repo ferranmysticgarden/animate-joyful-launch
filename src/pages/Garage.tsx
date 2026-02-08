@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { VehicleCard } from "@/components/VehicleCard";
 import { EliteVehicleCard } from "@/components/EliteVehicleCard";
 import { PurchaseModal } from "@/components/PurchaseModal";
-import { EpicCelebration } from "@/components/EpicCelebration";
+import { EpicCelebration, playCelebrationSound } from "@/components/EpicCelebration";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, RotateCcw, PartyPopper } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -91,9 +91,9 @@ const Garage = () => {
     
     const success = await handlePurchase(selectedVehicle);
     if (success) {
-      // Mark as purchased locally and trigger celebration
       purchaseLevel(selectedVehicle.level);
       setSelectedVehicle(null);
+      playCelebrationSound();
       setShowCelebration(true);
     }
   };
@@ -152,7 +152,10 @@ const Garage = () => {
           <div className="flex gap-2">
             {/* Preview celebration button */}
             <Button
-              onClick={() => setShowCelebration(true)}
+              onClick={() => {
+                playCelebrationSound();
+                setShowCelebration(true);
+              }}
               variant="ghost"
               className="text-primary hover:text-primary/80"
               title="Preview celebration"
