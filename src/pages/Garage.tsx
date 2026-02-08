@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { VehicleCard } from "@/components/VehicleCard";
 import { EliteVehicleCard } from "@/components/EliteVehicleCard";
 import { PurchaseModal } from "@/components/PurchaseModal";
+import { EpicCelebration } from "@/components/EpicCelebration";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, RotateCcw } from "lucide-react";
+import { ArrowLeft, RotateCcw, PartyPopper } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { usePurchases } from "@/hooks/usePurchases";
 import { usePurchaseHandler } from "@/hooks/usePurchaseHandler";
@@ -26,7 +27,7 @@ type Vehicle = {
   id: number;
   name: string;
   price: string;
-  originalPrice?: string; // For strikethrough discount
+  originalPrice?: string;
   priceValue: number;
   image: string;
   level: number;
@@ -34,7 +35,6 @@ type Vehicle = {
   isElite?: boolean;
 };
 
-// TODOS LOS 9 NIVELES CON PRECIOS CORRECTOS + DESCUENTOS
 const allVehicles: Vehicle[] = [
   { id: 1, name: "Sports Car", price: "€100", originalPrice: "€150", priceValue: 100, image: level1Image, level: 1 },
   { id: 2, name: "Yacht", price: "€200", originalPrice: "€280", priceValue: 200, image: level2Image, level: 2 },
@@ -43,35 +43,20 @@ const allVehicles: Vehicle[] = [
   { id: 5, name: "Luxury Mansion", price: "€500", originalPrice: "€700", priceValue: 500, image: level5Image, level: 5 },
   { id: 6, name: "Luxury Island", price: "€1,000", originalPrice: "€1,500", priceValue: 1000, image: luxuryIslandImage, level: 6 },
   { 
-    id: 7, 
-    name: "Private Archipelago", 
-    price: "€5,000", 
-    originalPrice: "€7,500",
-    priceValue: 5000,
-    image: level7Image, 
-    level: 7,
+    id: 7, name: "Private Archipelago", price: "€5,000", originalPrice: "€7,500", priceValue: 5000,
+    image: level7Image, level: 7,
     description: "Not one island. A private archipelago. Multiple exclusive islands under your absolute control.",
     isElite: true
   },
   { 
-    id: 8, 
-    name: "Orbital Space Station", 
-    price: "€10,000", 
-    originalPrice: "€15,000",
-    priceValue: 10000,
-    image: level8Image, 
-    level: 8,
+    id: 8, name: "Orbital Space Station", price: "€10,000", originalPrice: "€15,000", priceValue: 10000,
+    image: level8Image, level: 8,
     description: "El lujo definitivo ya no está en la Tierra.",
     isElite: true
   },
   { 
-    id: 9, 
-    name: "Own a Planet", 
-    price: "€50,000", 
-    originalPrice: "€75,000",
-    priceValue: 50000,
-    image: level9Image, 
-    level: 9,
+    id: 9, name: "Own a Planet", price: "€50,000", originalPrice: "€75,000", priceValue: 50000,
+    image: level9Image, level: 9,
     description: "No posees cosas. Posees mundos.",
     isElite: true
   },
@@ -79,34 +64,25 @@ const allVehicles: Vehicle[] = [
 
 const Garage = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [showCelebration, setShowCelebration] = useState(false);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { isPurchased } = usePurchases();
-  const { email, setEmail, isLoading, isNative, handlePurchase } = usePurchaseHandler();
+  const { isPurchased, purchaseLevel } = usePurchases();
+  const { isLoading, isNative, isLoggedIn, handlePurchase } = usePurchaseHandler();
   const { restorePurchases } = useGooglePlayBilling();
 
-  // SIEMPRE MOSTRAR TODOS LOS 9 NIVELES
   const vehicles = allVehicles;
-
-  // Separar vehículos normales y elite
   const regularVehicles = vehicles.filter(v => !v.isElite);
   const eliteVehicles = vehicles.filter(v => v.isElite);
-
-  // Contar niveles 1-6 comprados para el bonus
   const regularPurchasedCount = regularVehicles.filter(v => isPurchased(v.level)).length;
   const allRegularPurchased = regularPurchasedCount >= 6;
 
   useEffect(() => {
     const buyParam = searchParams.get("buy");
     if (!buyParam) return;
-
     const numeric = Number(buyParam);
     const target = vehicles.find((v) => v.level === numeric);
-
-    if (target) {
-      setSelectedVehicle(target);
-    }
-
+    if (target) setSelectedVehicle(target);
     setSearchParams({}, { replace: true });
   }, [searchParams, setSearchParams, vehicles]);
 
@@ -115,8 +91,24 @@ const Garage = () => {
     
     const success = await handlePurchase(selectedVehicle);
     if (success) {
+      // Mark as purchased locally and trigger celebration
+      purchaseLevel(selectedVehicle.level);
       setSelectedVehicle(null);
+      setShowCelebration(true);
     }
+  };
+
+  const handleBuyClick = (vehicle: Vehicle) => {
+    if (!isLoggedIn && !isNative) {
+      toast.error("Sign in first to purchase!", {
+        action: {
+          label: "Sign In",
+          onClick: () => navigate("/auth"),
+        },
+      });
+      return;
+    }
+    setSelectedVehicle(vehicle);
   };
 
   const handleRestore = async () => {
@@ -126,6 +118,9 @@ const Garage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-dark p-8 relative overflow-hidden">
+      {/* Celebration overlay */}
+      <EpicCelebration show={showCelebration} onComplete={() => setShowCelebration(false)} />
+
       {/* Floating dollar pattern background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {[...Array(12)].map((_, i) => (
@@ -138,11 +133,7 @@ const Garage = () => {
               transform: `rotate(${i * 15 - 20}deg)`,
             }}
           >
-            <FloatingDollar
-              delay={i * 0.3}
-              duration={3 + (i % 2)}
-              size={60 + (i % 3) * 30}
-            />
+            <FloatingDollar delay={i * 0.3} duration={3 + (i % 2)} size={60 + (i % 3) * 30} />
           </div>
         ))}
       </div>
@@ -158,17 +149,29 @@ const Garage = () => {
             Back to Home
           </Button>
 
-          {/* Restore Purchases button - only on Android */}
-          {isNative && (
+          <div className="flex gap-2">
+            {/* Preview celebration button */}
             <Button
-              onClick={handleRestore}
+              onClick={() => setShowCelebration(true)}
               variant="ghost"
               className="text-primary hover:text-primary/80"
+              title="Preview celebration"
             >
-              <RotateCcw className="mr-2 h-4 w-4" />
-              Restore
+              <PartyPopper className="mr-2 h-4 w-4" />
+              🎉 Preview
             </Button>
-          )}
+
+            {isNative && (
+              <Button
+                onClick={handleRestore}
+                variant="ghost"
+                className="text-primary hover:text-primary/80"
+              >
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Restore
+              </Button>
+            )}
+          </div>
         </div>
 
         <h1
@@ -181,10 +184,9 @@ const Garage = () => {
           Luxury Level
         </h1>
 
-        {/* Status challenge badge */}
         <StatusChallenge purchasedCount={regularPurchasedCount} />
 
-        {/* Vehículos Normales (Niveles 1-6) */}
+        {/* Regular Vehicles (Levels 1-6) */}
         <div className="space-y-6">
           {regularVehicles.map((vehicle) => (
             <VehicleCard
@@ -195,27 +197,22 @@ const Garage = () => {
               price={vehicle.price}
               originalPrice={vehicle.originalPrice}
               onView={() => navigate(`/vehicle/${vehicle.level}`)}
-              onBuy={() => setSelectedVehicle(vehicle)}
+              onBuy={() => handleBuyClick(vehicle)}
               isPurchased={isPurchased(vehicle.level)}
               isNew={vehicle.level === 6 && !isPurchased(6)}
             />
           ))}
         </div>
 
-        {/* BONUS UNLOCK BANNER - entre niveles normales y elite */}
-        <BonusUnlockBanner
-          purchasedCount={regularPurchasedCount}
-          totalRequired={6}
-        />
+        {/* BONUS UNLOCK BANNER */}
+        <BonusUnlockBanner purchasedCount={regularPurchasedCount} totalRequired={6} />
 
-        {/* Separador ELITE TIER - solo si desbloqueado */}
+        {/* ELITE TIER separator */}
         {allRegularPurchased && eliteVehicles.length > 0 && (
           <div className="my-8 relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t-2 border-primary/40" 
-                style={{
-                  boxShadow: "0 0 20px rgba(255, 215, 0, 0.5)"
-                }}
+                style={{ boxShadow: "0 0 20px rgba(255, 215, 0, 0.5)" }}
               />
             </div>
             <div className="relative flex justify-center">
@@ -232,28 +229,28 @@ const Garage = () => {
           </div>
         )}
 
-        {/* Vehículos Elite (Niveles 7-9) - solo visibles si se compraron los 6 */}
+        {/* Elite Vehicles (Levels 7-9) */}
         {allRegularPurchased && (
-        <div className="space-y-8">
-          {eliteVehicles.map((vehicle) => (
-            <EliteVehicleCard
-              key={vehicle.id}
-              name={vehicle.name}
-              image={vehicle.image}
-              level={vehicle.level}
-              price={vehicle.price}
-              originalPrice={vehicle.originalPrice}
-              description={vehicle.description || ""}
-              onView={() => navigate(`/vehicle/${vehicle.level}`)}
-              onBuy={() => setSelectedVehicle(vehicle)}
-              isPurchased={isPurchased(vehicle.level)}
-              isNew={vehicle.level >= 7}
-            />
-          ))}
-        </div>
+          <div className="space-y-8">
+            {eliteVehicles.map((vehicle) => (
+              <EliteVehicleCard
+                key={vehicle.id}
+                name={vehicle.name}
+                image={vehicle.image}
+                level={vehicle.level}
+                price={vehicle.price}
+                originalPrice={vehicle.originalPrice}
+                description={vehicle.description || ""}
+                onView={() => navigate(`/vehicle/${vehicle.level}`)}
+                onBuy={() => handleBuyClick(vehicle)}
+                isPurchased={isPurchased(vehicle.level)}
+                isNew={vehicle.level >= 7}
+              />
+            ))}
+          </div>
         )}
 
-        {/* Charity Disclaimer - Subtle */}
+        {/* Charity Disclaimer */}
         <div className="mt-16 pt-8 border-t border-primary/10">
           <p className="text-xs text-muted-foreground/50 text-center max-w-lg mx-auto">
             Luxury Life es un proyecto benéfico legal. Las compras representan productos de lujo simbólicos que contribuyen a causas reales.
@@ -267,11 +264,11 @@ const Garage = () => {
           onClose={() => setSelectedVehicle(null)}
           vehicleName={selectedVehicle.name}
           price={selectedVehicle.price}
-          email={email}
-          onEmailChange={setEmail}
+          email=""
+          onEmailChange={() => {}}
           onPurchase={onPurchaseClick}
           isLoading={isLoading}
-          showEmailInput={!isNative}
+          showEmailInput={false}
         />
       )}
     </div>

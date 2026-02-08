@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Capacitor } from "@capacitor/core";
 import { useGooglePlayBilling } from "./useGooglePlayBilling";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,9 +13,24 @@ interface Vehicle {
 }
 
 export const usePurchaseHandler = () => {
-  const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const { isNative, purchaseLevel: purchaseViaGooglePlay } = useGooglePlayBilling();
+
+  // Get logged-in user's email automatically
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUserEmail(session?.user?.email ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUserEmail(session?.user?.email ?? null);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handlePurchase = async (vehicle: Vehicle): Promise<boolean> => {
     if (!vehicle) return false;
@@ -41,16 +56,17 @@ export const usePurchaseHandler = () => {
       }
     }
 
-    // On Web, use Stripe
-    if (!email || !email.includes("@")) {
-      toast.error("Please enter a valid email address");
+    // On Web, use Stripe — use logged-in email or prompt
+    const emailToUse = userEmail;
+    if (!emailToUse) {
+      toast.error("Please sign in to make a purchase");
       return false;
     }
 
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-payment", {
-        body: { level: vehicle.level, email },
+        body: { level: vehicle.level, email: emailToUse },
       });
 
       if (error) throw error;
@@ -69,10 +85,9 @@ export const usePurchaseHandler = () => {
   };
 
   return {
-    email,
-    setEmail,
     isLoading,
     isNative,
+    isLoggedIn: !!userEmail,
     handlePurchase,
   };
 };
