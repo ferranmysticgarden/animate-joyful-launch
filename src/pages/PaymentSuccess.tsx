@@ -2,18 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { CheckCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Confetti } from "@/components/Confetti";
+import { EpicCelebration } from "@/components/EpicCelebration";
 
 const UNLOCKS_KEY = "luxury_unlocked_levels";
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [showConfetti, setShowConfetti] = useState(true);
+  const [showCelebration, setShowCelebration] = useState(true);
   const level = searchParams.get("level");
 
   useEffect(() => {
-    // Mark level as purchased in localStorage (same format as usePurchases)
     if (level) {
       const parsedPurchases = JSON.parse(localStorage.getItem("luxury_purchases") || "[]");
       const existingPurchases: number[] = Array.isArray(parsedPurchases) ? parsedPurchases : [];
@@ -23,7 +22,6 @@ const PaymentSuccess = () => {
         const updatedPurchases = Array.from(new Set([...existingPurchases, numericLevel]));
         localStorage.setItem("luxury_purchases", JSON.stringify(updatedPurchases));
 
-        // Unlock level 6 right after buying the mansion (level 5)
         if (numericLevel === 5) {
           const parsedUnlocks = JSON.parse(localStorage.getItem(UNLOCKS_KEY) || "[]");
           const existingUnlocks: number[] = Array.isArray(parsedUnlocks) ? parsedUnlocks : [];
@@ -32,33 +30,20 @@ const PaymentSuccess = () => {
         }
       }
     }
-
-    const timer = setTimeout(() => setShowConfetti(false), 5000);
-    return () => clearTimeout(timer);
   }, [level]);
 
   const getLevelName = () => {
-    switch (level) {
-      case "1":
-        return "Sports Car";
-      case "2":
-        return "Yacht";
-      case "3":
-        return "Helicopter";
-      case "4":
-        return "Private Jet";
-      case "5":
-        return "Mansion";
-      case "6":
-        return "Luxury Island";
-      default:
-        return "Luxury Item";
-    }
+    const names: Record<string, string> = {
+      "1": "Sports Car", "2": "Yacht", "3": "Helicopter",
+      "4": "Private Jet", "5": "Mansion", "6": "Luxury Island",
+      "7": "Private Archipelago", "8": "Orbital Space Station", "9": "Own a Planet",
+    };
+    return names[level || ""] || "Luxury Item";
   };
 
   return (
     <div className="min-h-screen bg-gradient-dark flex items-center justify-center p-4">
-      <Confetti show={showConfetti} />
+      <EpicCelebration show={showCelebration} onComplete={() => setShowCelebration(false)} />
 
       <div className="text-center space-y-8 max-w-md">
         <div className="animate-bounce">
@@ -82,6 +67,13 @@ const PaymentSuccess = () => {
         </div>
 
         <div className="flex flex-col gap-4">
+          <Button
+            onClick={() => setShowCelebration(true)}
+            className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-lg py-6"
+          >
+            🎉 Replay Celebration
+          </Button>
+
           <Button
             onClick={() => (level ? navigate(`/vehicle/${level}`) : navigate("/garage"))}
             className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg py-6"

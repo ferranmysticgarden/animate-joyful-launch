@@ -251,3 +251,83 @@ All colors MUST be HSL.
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
+/* ===== EPIC CELEBRATION ANIMATIONS ===== */
+.animate-celebration-fall {
+  animation: celebration-fall 3s ease-out forwards;
+}
+
+@keyframes celebration-fall {
+  0% {
+    top: -5%;
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: rotate(360deg) scale(1.1);
+  }
+  100% {
+    top: 105%;
+    opacity: 0;
+    transform: rotate(720deg) scale(0.5);
+  }
+}
+
+.animate-celebration-flash {
+  animation: celebration-flash 0.8s ease-out forwards;
+  background: radial-gradient(circle, hsla(45, 100%, 55%, 0.6), hsla(45, 100%, 55%, 0) 70%);
+}
+
+@keyframes celebration-flash {
+  0% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+.animate-champagne-left {
+  animation: champagne-rise 1.5s ease-out forwards;
+}
+
+.animate-champagne-right {
+  animation: champagne-rise 1.5s ease-out 0.2s forwards;
+}
+
+@keyframes champagne-rise {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  50% { transform: translateY(-40vh) rotate(-15deg); opacity: 1; }
+  100% { transform: translateY(-60vh) rotate(-30deg); opacity: 0; }
+}
+
+.animate-champagne-burst {
+  animation: champagne-burst 1.8s ease-out 0.4s forwards;
+  opacity: 0;
+}
+
+@keyframes champagne-burst {
+  0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
+  30% { transform: translate(-50%, 0) scale(1.5); opacity: 1; }
+  100% { transform: translate(-50%, -20vh) scale(2); opacity: 0; }
+}
+
+.animate-celebration-text {
+  animation: celebration-text 3s ease-out forwards;
+}
+
+@keyframes celebration-text {
+  0% { transform: scale(0.3); opacity: 0; }
+  20% { transform: scale(1.1); opacity: 1; }
+  30% { transform: scale(1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: scale(0.95); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-celebration-fall,
+  .animate-celebration-flash,
+  .animate-champagne-left,
+  .animate-champagne-right,
+  .animate-champagne-burst,
+  .animate-celebration-text {
+    animation: none !important;
+  }
+}
