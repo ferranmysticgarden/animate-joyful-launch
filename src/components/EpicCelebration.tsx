@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import applauseSound from "@/assets/purchase-applause.mp3";
 
 interface CelebrationPiece {
   id: number;
@@ -10,74 +11,123 @@ interface CelebrationPiece {
   rotation: number;
 }
 
-// Procedural celebration sound using Web Audio API
+// Play real applause audio file
+const playApplause = () => {
+  try {
+    const audio = new Audio(applauseSound);
+    audio.volume = 0.7;
+    audio.play().catch(() => {});
+  } catch (e) {
+    console.warn("Applause audio failed", e);
+  }
+};
+
+// Firework/cracker pop sounds — short, punchy bursts
+const playFireworks = (ctx: AudioContext) => {
+  const popTimes = [0, 0.3, 0.5, 0.9, 1.2, 1.6, 2.0, 2.5, 3.0, 3.4];
+  popTimes.forEach((t) => {
+    // Each pop = short noise burst + resonant click
+    const bufLen = Math.floor(ctx.sampleRate * 0.12);
+    const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufLen; i++) {
+      const env = Math.exp(-(i / ctx.sampleRate) * 40);
+      data[i] = (Math.random() * 2 - 1) * env;
+    }
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = "highpass";
+    filter.frequency.value = 1000 + Math.random() * 3000;
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.4 + Math.random() * 0.3, ctx.currentTime + t);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.12);
+
+    src.connect(filter).connect(gain).connect(ctx.destination);
+    src.start(ctx.currentTime + t);
+  });
+};
+
+// Party whistle sounds — ascending pitch sweeps
+const playWhistles = (ctx: AudioContext) => {
+  const whistleTimes = [0.6, 1.8, 2.8];
+  whistleTimes.forEach((t) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    
+    const startFreq = 800 + Math.random() * 400;
+    const endFreq = startFreq + 800 + Math.random() * 600;
+    
+    osc.frequency.setValueAtTime(startFreq, ctx.currentTime + t);
+    osc.frequency.linearRampToValueAtTime(endFreq, ctx.currentTime + t + 0.4);
+    osc.frequency.linearRampToValueAtTime(startFreq + 200, ctx.currentTime + t + 0.7);
+    
+    // Add vibrato for realism
+    const vibrato = ctx.createOscillator();
+    const vibratoGain = ctx.createGain();
+    vibrato.frequency.value = 15;
+    vibratoGain.gain.value = 30;
+    vibrato.connect(vibratoGain).connect(osc.frequency);
+    vibrato.start(ctx.currentTime + t);
+    vibrato.stop(ctx.currentTime + t + 0.8);
+    
+    gain.gain.setValueAtTime(0, ctx.currentTime + t);
+    gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + t + 0.05);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime + t + 0.5);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.8);
+    
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(ctx.currentTime + t);
+    osc.stop(ctx.currentTime + t + 0.9);
+  });
+};
+
+// Champagne cork pop — deep thump + high fizz
+const playChampagnePop = (ctx: AudioContext) => {
+  // Deep thump
+  const thump = ctx.createOscillator();
+  const thumpGain = ctx.createGain();
+  thump.frequency.setValueAtTime(150, ctx.currentTime);
+  thump.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.15);
+  thumpGain.gain.setValueAtTime(0.5, ctx.currentTime);
+  thumpGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+  thump.connect(thumpGain).connect(ctx.destination);
+  thump.start();
+  thump.stop(ctx.currentTime + 0.25);
+
+  // Fizz noise
+  const fizzLen = Math.floor(ctx.sampleRate * 2);
+  const fizzBuf = ctx.createBuffer(1, fizzLen, ctx.sampleRate);
+  const fizzData = fizzBuf.getChannelData(0);
+  for (let i = 0; i < fizzLen; i++) {
+    const env = Math.exp(-(i / ctx.sampleRate) * 2);
+    fizzData[i] = (Math.random() * 2 - 1) * env * 0.08;
+  }
+  const fizzSrc = ctx.createBufferSource();
+  fizzSrc.buffer = fizzBuf;
+  const hpf = ctx.createBiquadFilter();
+  hpf.type = "highpass";
+  hpf.frequency.value = 6000;
+  fizzSrc.connect(hpf).connect(ctx.destination);
+  fizzSrc.start(ctx.currentTime + 0.05);
+};
+
+// Main celebration sound — combines all effects
 export const playCelebrationSound = () => {
   try {
+    // 1. Real applause audio
+    playApplause();
+
+    // 2. Procedural effects layered on top
     const ctx = new AudioContext();
-
-    // Applause-like noise burst
-    const applauseDuration = 3;
-    const noiseBuffer = ctx.createBuffer(2, ctx.sampleRate * applauseDuration, ctx.sampleRate);
-    for (let ch = 0; ch < 2; ch++) {
-      const data = noiseBuffer.getChannelData(ch);
-      for (let i = 0; i < data.length; i++) {
-        const t = i / ctx.sampleRate;
-        const envelope = Math.exp(-t * 0.8) * (1 + 0.3 * Math.sin(t * 6));
-        data[i] = (Math.random() * 2 - 1) * envelope * 0.15;
-      }
-    }
-    const noiseSource = ctx.createBufferSource();
-    noiseSource.buffer = noiseBuffer;
-    const noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = "bandpass";
-    noiseFilter.frequency.value = 3000;
-    noiseFilter.Q.value = 0.5;
-    noiseSource.connect(noiseFilter).connect(ctx.destination);
-    noiseSource.start();
-
-    // Champagne pop
-    const popOsc = ctx.createOscillator();
-    const popGain = ctx.createGain();
-    popOsc.frequency.setValueAtTime(800, ctx.currentTime);
-    popOsc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.15);
-    popGain.gain.setValueAtTime(0.3, ctx.currentTime);
-    popGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-    popOsc.connect(popGain).connect(ctx.destination);
-    popOsc.start();
-    popOsc.stop(ctx.currentTime + 0.2);
-
-    // Celebration chime melody
-    const notes = [523, 659, 784, 1047, 784, 1047]; // C5-E5-G5-C6
-    notes.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "triangle";
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.15);
-      gain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + i * 0.15 + 0.05);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.4);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start(ctx.currentTime + i * 0.15);
-      osc.stop(ctx.currentTime + i * 0.15 + 0.5);
-    });
-
-    // Whistle effect
-    const whistleOsc = ctx.createOscillator();
-    const whistleGain = ctx.createGain();
-    whistleOsc.type = "sine";
-    whistleOsc.frequency.setValueAtTime(1200, ctx.currentTime + 0.8);
-    whistleOsc.frequency.linearRampToValueAtTime(2400, ctx.currentTime + 1.2);
-    whistleOsc.frequency.linearRampToValueAtTime(1800, ctx.currentTime + 1.5);
-    whistleGain.gain.setValueAtTime(0, ctx.currentTime + 0.8);
-    whistleGain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.9);
-    whistleGain.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 1.3);
-    whistleGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.6);
-    whistleOsc.connect(whistleGain).connect(ctx.destination);
-    whistleOsc.start(ctx.currentTime + 0.8);
-    whistleOsc.stop(ctx.currentTime + 1.7);
-
+    playChampagnePop(ctx);
+    playFireworks(ctx);
+    playWhistles(ctx);
   } catch (e) {
-    console.warn("Audio not available", e);
+    console.warn("Celebration audio error", e);
   }
 };
 
