@@ -19,6 +19,8 @@ import level7Image from "@/assets/level7-paradise-island.jpg";
 import level8Image from "@/assets/level8-space-station.jpg";
 import level9Image from "@/assets/level9-planet.jpg";
 import { FloatingDollar } from "@/components/FloatingDollar";
+import { BonusUnlockBanner } from "@/components/BonusUnlockBanner";
+import { StatusChallenge } from "@/components/StatusChallenge";
 
 type Vehicle = {
   id: number;
@@ -89,6 +91,10 @@ const Garage = () => {
   // Separar vehículos normales y elite
   const regularVehicles = vehicles.filter(v => !v.isElite);
   const eliteVehicles = vehicles.filter(v => v.isElite);
+
+  // Contar niveles 1-6 comprados para el bonus
+  const regularPurchasedCount = regularVehicles.filter(v => isPurchased(v.level)).length;
+  const allRegularPurchased = regularPurchasedCount >= 6;
 
   useEffect(() => {
     const buyParam = searchParams.get("buy");
@@ -166,7 +172,7 @@ const Garage = () => {
         </div>
 
         <h1
-          className="text-6xl font-bold text-center text-primary mb-12 tracking-wide"
+          className="text-6xl font-bold text-center text-primary mb-6 tracking-wide"
           style={{
             fontFamily: "'Brush Script MT', 'Segoe Script', cursive",
             textShadow: "0 0 30px rgba(255, 215, 0, 0.5)",
@@ -174,6 +180,9 @@ const Garage = () => {
         >
           Luxury Level
         </h1>
+
+        {/* Status challenge badge */}
+        <StatusChallenge purchasedCount={regularPurchasedCount} />
 
         {/* Vehículos Normales (Niveles 1-6) */}
         <div className="space-y-6">
@@ -193,9 +202,15 @@ const Garage = () => {
           ))}
         </div>
 
-        {/* Separador ELITE TIER */}
-        {eliteVehicles.length > 0 && (
-          <div className="my-16 relative">
+        {/* BONUS UNLOCK BANNER - entre niveles normales y elite */}
+        <BonusUnlockBanner
+          purchasedCount={regularPurchasedCount}
+          totalRequired={6}
+        />
+
+        {/* Separador ELITE TIER - solo si desbloqueado */}
+        {allRegularPurchased && eliteVehicles.length > 0 && (
+          <div className="my-8 relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t-2 border-primary/40" 
                 style={{
@@ -209,7 +224,6 @@ const Garage = () => {
                 style={{
                   fontFamily: "'Orbitron', sans-serif",
                   textShadow: "0 0 30px rgba(255, 215, 0, 0.8)",
-                  animation: "pulse-gold 2s ease-in-out infinite"
                 }}
               >
                 ⚜️ ELITE TIER ⚜️
@@ -218,7 +232,8 @@ const Garage = () => {
           </div>
         )}
 
-        {/* Vehículos Elite (Niveles 7-9) */}
+        {/* Vehículos Elite (Niveles 7-9) - solo visibles si se compraron los 6 */}
+        {allRegularPurchased && (
         <div className="space-y-8">
           {eliteVehicles.map((vehicle) => (
             <EliteVehicleCard
@@ -236,6 +251,7 @@ const Garage = () => {
             />
           ))}
         </div>
+        )}
 
         {/* Charity Disclaimer - Subtle */}
         <div className="mt-16 pt-8 border-t border-primary/10">
