@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Capacitor } from "@capacitor/core";
 import { useGooglePlayBilling } from "./useGooglePlayBilling";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +16,15 @@ export const usePurchaseHandler = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { isNative, purchaseLevel: purchaseViaGooglePlay } = useGooglePlayBilling();
+
+  // Auto-fill email from auth session
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.email) {
+        setEmail(session.user.email);
+      }
+    });
+  }, []);
 
   const handlePurchase = async (vehicle: Vehicle): Promise<boolean> => {
     if (!vehicle) return false;
@@ -41,7 +50,7 @@ export const usePurchaseHandler = () => {
       }
     }
 
-    // On Web, use Stripe
+    // On Web, use Stripe - email comes from auth session
     if (!email || !email.includes("@")) {
       toast.error("Please enter a valid email address");
       return false;

@@ -255,7 +255,7 @@ const Garage = () => {
           onEmailChange={setEmail}
           onPurchase={onPurchaseClick}
           isLoading={isLoading}
-          showEmailInput={!isNative}
+          showEmailInput={!isNative && !email}
         />
       )}
     </div>
