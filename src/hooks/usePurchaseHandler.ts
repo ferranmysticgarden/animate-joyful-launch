@@ -66,7 +66,7 @@ export const usePurchaseHandler = () => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-payment", {
-        body: { level: vehicle.level, email: emailToUse },
+        body: { level: vehicle.level },
       });
 
       if (error) throw error;
