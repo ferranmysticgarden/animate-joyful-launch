@@ -86,10 +86,10 @@ echo 🔏 Preparando firmado + subiendo versionCode...
 node scripts\android\prepare-android-release.mjs
 if errorlevel 1 goto :error
 
-REM Build AAB
+REM Build AAB - pass signing config directly to avoid Gradle prompting for passwords
 echo 🏗️  Building AAB...
 cd android
-call gradlew.bat bundleRelease
+call gradlew.bat bundleRelease -Pandroid.injected.signing.store.file="%CD%\app\release-key.jks" -Pandroid.injected.signing.store.password=%KEYSTORE_PASSWORD% -Pandroid.injected.signing.key.alias=%KEYSTORE_ALIAS% -Pandroid.injected.signing.key.password=%KEYSTORE_ALIAS_PASSWORD%
 
 REM Stop on Gradle failure (avoid printing success when build failed)
 if %ERRORLEVEL% NEQ 0 goto :error
