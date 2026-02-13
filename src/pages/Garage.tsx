@@ -198,7 +198,7 @@ const Garage = () => {
         <BonusUnlockBanner purchasedCount={regularPurchasedCount} totalRequired={6} />
 
         {/* ELITE TIER separator */}
-        {allRegularPurchased && eliteVehicles.length > 0 && (
+        {eliteVehicles.length > 0 && (
           <div className="my-8 relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t-2 border-primary/40" 
@@ -219,26 +219,39 @@ const Garage = () => {
           </div>
         )}
 
-        {/* Elite Vehicles (Levels 7-9) */}
-        {allRegularPurchased && (
-          <div className="space-y-8">
-            {eliteVehicles.map((vehicle) => (
-              <EliteVehicleCard
-                key={vehicle.id}
-                name={vehicle.name}
-                image={vehicle.image}
-                level={vehicle.level}
-                price={vehicle.price}
-                originalPrice={vehicle.originalPrice}
-                description={vehicle.description || ""}
-                onView={() => navigate(`/vehicle/${vehicle.level}`)}
-                onBuy={() => handleBuyClick(vehicle)}
-                isPurchased={isPurchased(vehicle.level)}
-                isNew={vehicle.level >= 7}
-              />
-            ))}
-          </div>
-        )}
+        {/* Elite Vehicles (Levels 7-9) - always visible */}
+        <div className="space-y-8">
+          {eliteVehicles.map((vehicle) => {
+            const isLocked = !allRegularPurchased;
+            return (
+              <div key={vehicle.id} className="relative">
+                {isLocked && (
+                  <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-sm rounded-xl flex flex-col items-center justify-center gap-3 cursor-not-allowed">
+                    <div className="text-5xl">🔒</div>
+                    <span 
+                      className="text-sm font-black text-primary uppercase tracking-wider"
+                      style={{ fontFamily: "'Orbitron', sans-serif", textShadow: "0 0 20px rgba(255, 215, 0, 0.6)" }}
+                    >
+                      Completa los 6 niveles para desbloquear
+                    </span>
+                  </div>
+                )}
+                <EliteVehicleCard
+                  name={vehicle.name}
+                  image={vehicle.image}
+                  level={vehicle.level}
+                  price={vehicle.price}
+                  originalPrice={vehicle.originalPrice}
+                  description={vehicle.description || ""}
+                  onView={isLocked ? undefined : () => navigate(`/vehicle/${vehicle.level}`)}
+                  onBuy={isLocked ? undefined : () => handleBuyClick(vehicle)}
+                  isPurchased={isPurchased(vehicle.level)}
+                  isNew={vehicle.level >= 7}
+                />
+              </div>
+            );
+          })}
+        </div>
 
         {/* Charity Disclaimer */}
         <div className="mt-16 pt-8 border-t border-primary/10">
