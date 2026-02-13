@@ -1,16 +1,16 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
+import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 // Input validation schema
 const RequestSchema = z.object({
   level: z.number().int().min(1).max(9),
-  email: z.string().email().max(255).toLowerCase().trim(),
 });
 
 // Price IDs para cada nivel (VERIFICADOS CON STRIPE API)
@@ -39,6 +39,33 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Authentication required" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401,
+      });
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+    );
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
+    if (userError || !userData.user?.email) {
+      logStep("Auth failed", { error: userError?.message });
+      return new Response(JSON.stringify({ error: "Invalid authentication" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 401,
+      });
+    }
+
+    const email = userData.user.email;
+    logStep("User authenticated", { emailDomain: email.split("@")[1] });
+
     const body = await req.json();
     const parseResult = RequestSchema.safeParse(body);
     if (!parseResult.success) {
@@ -50,7 +77,7 @@ serve(async (req) => {
       });
     }
 
-    const { level, email } = parseResult.data;
+    const { level } = parseResult.data;
     logStep("Request validated", { level, emailDomain: email.split("@")[1] });
 
     const priceId = PRICE_IDS[level];
