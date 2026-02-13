@@ -1,17 +1,10 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
-import { createClient } from "npm:@supabase/supabase-js@2.57.2";
-import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
-
-// Input validation schema
-const RequestSchema = z.object({
-  level: z.number().int().min(1).max(9),
-});
 
 // Price IDs para cada nivel (VERIFICADOS CON STRIPE API)
 const PRICE_IDS: Record<number, string> = {
@@ -26,7 +19,7 @@ const PRICE_IDS: Record<number, string> = {
   9: "price_1Su9jLB6GI8NmIPnjMLJS8fQ", // Own a Planet - €50000
 };
 
-const logStep = (step: string, details?: Record<string, unknown>) => {
+const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[CREATE-PAYMENT] ${step}${detailsStr}`);
 };
@@ -39,48 +32,17 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    // Authenticate user
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Authentication required" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 401,
-      });
+    const { level, email } = await req.json();
+    logStep("Request body", { level, email });
+
+    if (!level || !email) {
+      throw new Error("Level and email are required");
     }
-
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
-    );
-
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError || !userData.user?.email) {
-      logStep("Auth failed", { error: userError?.message });
-      return new Response(JSON.stringify({ error: "Invalid authentication" }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 401,
-      });
-    }
-
-    const email = userData.user.email;
-    logStep("User authenticated", { emailDomain: email.split("@")[1] });
-
-    const body = await req.json();
-    const parseResult = RequestSchema.safeParse(body);
-    if (!parseResult.success) {
-      const errors = parseResult.error.flatten().fieldErrors;
-      logStep("Validation failed", { errors });
-      return new Response(JSON.stringify({ error: "Invalid input", details: errors }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
-      });
-    }
-
-    const { level } = parseResult.data;
-    logStep("Request validated", { level, emailDomain: email.split("@")[1] });
 
     const priceId = PRICE_IDS[level];
+    if (!priceId) {
+      throw new Error(`Invalid level: ${level}`);
+    }
     logStep("Price ID found", { priceId });
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");

@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
 import { Card } from "./ui/card";
 import { Diamond, Check, Crown, Sparkles } from "lucide-react";
-import { useEliteSound } from "@/hooks/useEliteSound";
 
 interface EliteVehicleCardProps {
   name: string;
@@ -16,12 +14,6 @@ interface EliteVehicleCardProps {
   isNew?: boolean;
 }
 
-const levelEffectClass: Record<number, string> = {
-  7: "elite-level-7",
-  8: "elite-level-8",
-  9: "elite-level-9",
-};
-
 export const EliteVehicleCard = ({
   name,
   image,
@@ -35,27 +27,6 @@ export const EliteVehicleCard = ({
   isNew = false,
 }: EliteVehicleCardProps) => {
   const isClickable = typeof onView === "function";
-  const { playEliteSound } = useEliteSound();
-  const [justUnlocked, setJustUnlocked] = useState(false);
-  const [wasNotPurchased, setWasNotPurchased] = useState(!isPurchased);
-
-  // Detect transition from not-purchased → purchased for unlock animation
-  useEffect(() => {
-    if (isPurchased && wasNotPurchased) {
-      setJustUnlocked(true);
-      const timer = setTimeout(() => setJustUnlocked(false), 1200);
-      return () => clearTimeout(timer);
-    }
-    setWasNotPurchased(!isPurchased);
-  }, [isPurchased]);
-
-  const effectClass = levelEffectClass[level] || "";
-
-  const handleBuyClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    playEliteSound(level);
-    onBuy?.();
-  };
 
   return (
     <Card
@@ -69,28 +40,38 @@ export const EliteVehicleCard = ({
           onView?.();
         }
       }}
-      className={`elite-card ${effectClass} ${justUnlocked ? "elite-unlocked" : ""} group relative p-8 backdrop-blur-sm transition-all duration-500 overflow-hidden ${
+      className={`group relative p-8 backdrop-blur-sm transition-all duration-500 overflow-hidden ${
         isPurchased
           ? "border-2 border-green-500/50 cursor-pointer"
           : "cursor-pointer border-2 border-primary/40 hover:border-primary hover:scale-[1.01]"
       }`}
       style={{
-        background:
-          "linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(30,20,0,0.9) 50%, rgba(0,0,0,0.95) 100%)",
+        background: "linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(30,20,0,0.9) 50%, rgba(0,0,0,0.95) 100%)",
+        boxShadow: isPurchased 
+          ? "0 0 40px rgba(34, 197, 94, 0.4), inset 0 0 60px rgba(34, 197, 94, 0.1)"
+          : "0 0 60px rgba(255, 215, 0, 0.4), 0 0 120px rgba(255, 215, 0, 0.2), inset 0 0 60px rgba(255, 215, 0, 0.05)",
       }}
     >
+      {/* Animated glow border effect */}
+      <div 
+        className="absolute inset-0 opacity-50 pointer-events-none"
+        style={{
+          background: "linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent)",
+          animation: "shimmer 3s ease-in-out infinite",
+        }}
+      />
+
       {/* Crown badge */}
       <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
-        <div
+        <div 
           className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary/50"
           style={{
-            background:
-              "linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.2))",
+            background: "linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.2))",
             boxShadow: "0 0 20px rgba(255, 215, 0, 0.4)",
           }}
         >
           <Crown className="w-5 h-5 text-primary" />
-          <span
+          <span 
             className="text-sm font-black text-primary uppercase tracking-wider"
             style={{ fontFamily: "'Orbitron', sans-serif" }}
           >
@@ -98,16 +79,15 @@ export const EliteVehicleCard = ({
           </span>
         </div>
         {isNew && !isPurchased && (
-          <div
+          <div 
             className="flex items-center justify-center gap-1 px-3 py-1 rounded-full border border-red-500/50 animate-pulse"
             style={{
-              background:
-                "linear-gradient(135deg, rgba(239,68,68,0.3), rgba(220,38,38,0.3))",
+              background: "linear-gradient(135deg, rgba(239,68,68,0.3), rgba(220,38,38,0.3))",
               boxShadow: "0 0 15px rgba(239, 68, 68, 0.5)",
             }}
           >
             <Sparkles className="w-3 h-3 text-red-400" />
-            <span
+            <span 
               className="text-xs font-black text-red-400 uppercase tracking-wider"
               style={{ fontFamily: "'Orbitron', sans-serif" }}
             >
@@ -118,8 +98,15 @@ export const EliteVehicleCard = ({
       </div>
 
       <div className="flex items-center gap-8 relative z-10">
-        {/* Image container */}
-        <div className="relative w-44 h-44 rounded-2xl overflow-hidden flex-shrink-0 elite-image-container">
+        {/* Image container with special glow */}
+        <div
+          className="relative w-44 h-44 rounded-2xl overflow-hidden flex-shrink-0"
+          style={{
+            boxShadow: "0 0 40px rgba(255, 215, 0, 0.5), inset 0 0 40px rgba(255, 215, 0, 0.1)",
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-accent/20" />
+          
           <img
             src={image}
             alt={name}
@@ -132,6 +119,10 @@ export const EliteVehicleCard = ({
               <Check className="w-20 h-20 text-green-400" strokeWidth={3} />
             </div>
           )}
+
+          {/* Sparkle effects */}
+          <Sparkles className="absolute top-2 left-2 w-6 h-6 text-primary animate-pulse z-20" />
+          <Sparkles className="absolute bottom-2 right-2 w-4 h-4 text-primary animate-pulse z-20" style={{ animationDelay: "0.5s" }} />
         </div>
 
         <div className="flex-1 flex flex-col justify-center">
@@ -144,8 +135,8 @@ export const EliteVehicleCard = ({
           >
             {name}
           </h3>
-
-          <p
+          
+          <p 
             className="text-lg text-muted-foreground/80 italic mb-4"
             style={{ fontFamily: "'Georgia', serif" }}
           >
@@ -154,9 +145,9 @@ export const EliteVehicleCard = ({
 
           <div className="flex gap-1 mb-2">
             {Array.from({ length: Math.min(level, 9) }).map((_, i) => (
-              <Diamond
-                key={i}
-                className="w-5 h-5 text-primary fill-primary animate-pulse"
+              <Diamond 
+                key={i} 
+                className="w-5 h-5 text-primary fill-primary animate-pulse" 
                 style={{ animationDelay: `${i * 0.1}s` }}
               />
             ))}
@@ -164,7 +155,7 @@ export const EliteVehicleCard = ({
 
           <div className="flex items-center gap-3">
             {originalPrice && (
-              <span
+              <span 
                 className="text-xl text-muted-foreground line-through"
                 style={{ fontFamily: "'Orbitron', sans-serif" }}
               >
@@ -192,9 +183,9 @@ export const EliteVehicleCard = ({
           {isPurchased ? (
             <div
               className="w-24 h-24 rounded-full bg-gradient-to-br from-green-500 to-green-700 text-white font-bold text-sm shadow-lg flex items-center justify-center border-4 border-green-400/50"
-              style={{
+              style={{ 
                 fontFamily: "'Orbitron', sans-serif",
-                boxShadow: "0 0 30px rgba(34, 197, 94, 0.5)",
+                boxShadow: "0 0 30px rgba(34, 197, 94, 0.5)"
               }}
               aria-label="Owned"
             >
@@ -202,36 +193,23 @@ export const EliteVehicleCard = ({
             </div>
           ) : (
             <button
-              className="elite-buy-btn w-24 h-24 rounded-full text-white font-black text-lg shadow-lg transition-all duration-300 hover:scale-110 flex items-center justify-center border-4 border-primary/50"
-              style={{
+              className="w-24 h-24 rounded-full text-white font-black text-lg shadow-lg transition-all duration-300 hover:scale-110 flex items-center justify-center border-4 border-primary/50"
+              style={{ 
                 fontFamily: "'Orbitron', sans-serif",
-                background:
-                  "linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)",
-                boxShadow:
-                  "0 0 40px rgba(255, 215, 0, 0.6), 0 0 80px rgba(255, 140, 0, 0.4)",
+                background: "linear-gradient(135deg, #FFD700, #FFA500, #FF6B6B)",
+                boxShadow: "0 0 40px rgba(255, 215, 0, 0.6), 0 0 80px rgba(255, 140, 0, 0.4)",
+                animation: "pulse-gold 1.5s ease-in-out infinite",
               }}
-              onClick={handleBuyClick}
+              onClick={(e) => {
+                e.stopPropagation();
+                onBuy?.();
+              }}
             >
               BUY
             </button>
           )}
         </div>
       </div>
-
-      {/* Unlock flash overlay */}
-      {justUnlocked && (
-        <div className="elite-unlock-flash absolute inset-0 z-30 pointer-events-none flex items-center justify-center">
-          <span
-            className="text-4xl font-black text-primary uppercase tracking-widest"
-            style={{
-              fontFamily: "'Orbitron', sans-serif",
-              textShadow: "0 0 40px rgba(255,215,0,0.9)",
-            }}
-          >
-            Unlocked
-          </span>
-        </div>
-      )}
     </Card>
   );
 };

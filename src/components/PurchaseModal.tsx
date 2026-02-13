@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { Loader2 } from "lucide-react";
 
 interface PurchaseModalProps {
@@ -8,8 +9,8 @@ interface PurchaseModalProps {
   onPurchase: () => void;
   vehicleName: string;
   price: string;
-  email?: string;
-  onEmailChange?: (email: string) => void;
+  email: string;
+  onEmailChange: (email: string) => void;
   isLoading?: boolean;
   showEmailInput?: boolean;
 }
@@ -20,7 +21,10 @@ export const PurchaseModal = ({
   onPurchase,
   vehicleName,
   price,
+  email,
+  onEmailChange,
   isLoading = false,
+  showEmailInput = true,
 }: PurchaseModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -32,6 +36,7 @@ export const PurchaseModal = ({
         </DialogHeader>
         
         <div className="space-y-4">
+          {/* Status quote */}
           <p 
             className="text-xl text-center text-primary font-bold tracking-wide"
             style={{ 
@@ -42,8 +47,24 @@ export const PurchaseModal = ({
             "Your status speaks for itself."
           </p>
           
+          {showEmailInput && (
+            <div>
+              <label className="text-sm text-muted-foreground mb-2 block">
+                Enter your email to proceed with payment:
+              </label>
+              <Input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={(e) => onEmailChange(e.target.value)}
+                className="bg-background/50 border-primary/30"
+                disabled={isLoading}
+              />
+            </div>
+          )}
+          
           <p className="text-xs text-muted-foreground/60 text-center">
-            Secure payment via Stripe
+            {showEmailInput ? "Secure Stripe checkout" : "Secure Google Play purchase"}
           </p>
           
           <div className="flex gap-4 justify-center pt-2">
@@ -51,7 +72,7 @@ export const PurchaseModal = ({
               onClick={onPurchase}
               size="lg"
               className="px-8 py-6 text-xl font-bold bg-green-500 hover:bg-green-600 text-white shadow-glow"
-              disabled={isLoading}
+              disabled={isLoading || (showEmailInput && !email)}
             >
               {isLoading ? (
                 <>
@@ -59,7 +80,7 @@ export const PurchaseModal = ({
                   Processing...
                 </>
               ) : (
-                "Buy Now 💎"
+                "Buy Now"
               )}
             </Button>
             <Button

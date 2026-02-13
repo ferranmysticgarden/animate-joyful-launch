@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { VehicleCard } from "@/components/VehicleCard";
 import { EliteVehicleCard } from "@/components/EliteVehicleCard";
 import { PurchaseModal } from "@/components/PurchaseModal";
-import { EpicCelebration, playCelebrationSound } from "@/components/EpicCelebration";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -20,14 +19,12 @@ import level7Image from "@/assets/level7-paradise-island.jpg";
 import level8Image from "@/assets/level8-space-station.jpg";
 import level9Image from "@/assets/level9-planet.jpg";
 import { FloatingDollar } from "@/components/FloatingDollar";
-import { BonusUnlockBanner } from "@/components/BonusUnlockBanner";
-import { StatusChallenge } from "@/components/StatusChallenge";
 
 type Vehicle = {
   id: number;
   name: string;
   price: string;
-  originalPrice?: string;
+  originalPrice?: string; // For strikethrough discount
   priceValue: number;
   image: string;
   level: number;
@@ -35,6 +32,7 @@ type Vehicle = {
   isElite?: boolean;
 };
 
+// TODOS LOS 9 NIVELES CON PRECIOS CORRECTOS + DESCUENTOS
 const allVehicles: Vehicle[] = [
   { id: 1, name: "Sports Car", price: "€100", originalPrice: "€150", priceValue: 100, image: level1Image, level: 1 },
   { id: 2, name: "Yacht", price: "€200", originalPrice: "€280", priceValue: 200, image: level2Image, level: 2 },
@@ -43,20 +41,35 @@ const allVehicles: Vehicle[] = [
   { id: 5, name: "Luxury Mansion", price: "€500", originalPrice: "€700", priceValue: 500, image: level5Image, level: 5 },
   { id: 6, name: "Luxury Island", price: "€1,000", originalPrice: "€1,500", priceValue: 1000, image: luxuryIslandImage, level: 6 },
   { 
-    id: 7, name: "Private Archipelago", price: "€5,000", originalPrice: "€7,500", priceValue: 5000,
-    image: level7Image, level: 7,
-    description: "Not one island. A private archipelago. Multiple exclusive islands under your absolute control.",
+    id: 7, 
+    name: "Private Paradise Island", 
+    price: "€5,000", 
+    originalPrice: "€7,500",
+    priceValue: 5000,
+    image: level7Image, 
+    level: 7,
+    description: "Un lugar que no existe en los mapas. Solo para ti.",
     isElite: true
   },
   { 
-    id: 8, name: "Orbital Space Station", price: "€10,000", originalPrice: "€15,000", priceValue: 10000,
-    image: level8Image, level: 8,
+    id: 8, 
+    name: "Orbital Space Station", 
+    price: "€10,000", 
+    originalPrice: "€15,000",
+    priceValue: 10000,
+    image: level8Image, 
+    level: 8,
     description: "El lujo definitivo ya no está en la Tierra.",
     isElite: true
   },
   { 
-    id: 9, name: "Own a Planet", price: "€50,000", originalPrice: "€75,000", priceValue: 50000,
-    image: level9Image, level: 9,
+    id: 9, 
+    name: "Own a Planet", 
+    price: "€50,000", 
+    originalPrice: "€75,000",
+    priceValue: 50000,
+    image: level9Image, 
+    level: 9,
     description: "No posees cosas. Posees mundos.",
     isElite: true
   },
@@ -64,25 +77,30 @@ const allVehicles: Vehicle[] = [
 
 const Garage = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-  const [showCelebration, setShowCelebration] = useState(false);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { isPurchased, purchaseLevel } = usePurchases();
-  const { isLoading, isNative, isLoggedIn, handlePurchase } = usePurchaseHandler();
+  const { isPurchased } = usePurchases();
+  const { email, setEmail, isLoading, isNative, handlePurchase } = usePurchaseHandler();
   const { restorePurchases } = useGooglePlayBilling();
 
+  // SIEMPRE MOSTRAR TODOS LOS 9 NIVELES
   const vehicles = allVehicles;
+
+  // Separar vehículos normales y elite
   const regularVehicles = vehicles.filter(v => !v.isElite);
   const eliteVehicles = vehicles.filter(v => v.isElite);
-  const regularPurchasedCount = regularVehicles.filter(v => isPurchased(v.level)).length;
-  const allRegularPurchased = regularPurchasedCount >= 6;
 
   useEffect(() => {
     const buyParam = searchParams.get("buy");
     if (!buyParam) return;
+
     const numeric = Number(buyParam);
     const target = vehicles.find((v) => v.level === numeric);
-    if (target) setSelectedVehicle(target);
+
+    if (target) {
+      setSelectedVehicle(target);
+    }
+
     setSearchParams({}, { replace: true });
   }, [searchParams, setSearchParams, vehicles]);
 
@@ -91,24 +109,8 @@ const Garage = () => {
     
     const success = await handlePurchase(selectedVehicle);
     if (success) {
-      purchaseLevel(selectedVehicle.level);
       setSelectedVehicle(null);
-      playCelebrationSound();
-      setShowCelebration(true);
     }
-  };
-
-  const handleBuyClick = (vehicle: Vehicle) => {
-    if (!isLoggedIn && !isNative) {
-      toast.error("Sign in first to purchase!", {
-        action: {
-          label: "Sign In",
-          onClick: () => navigate("/auth"),
-        },
-      });
-      return;
-    }
-    setSelectedVehicle(vehicle);
   };
 
   const handleRestore = async () => {
@@ -118,9 +120,6 @@ const Garage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-dark p-8 relative overflow-hidden">
-      {/* Celebration overlay */}
-      <EpicCelebration show={showCelebration} onComplete={() => setShowCelebration(false)} />
-
       {/* Floating dollar pattern background */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {[...Array(12)].map((_, i) => (
@@ -133,7 +132,11 @@ const Garage = () => {
               transform: `rotate(${i * 15 - 20}deg)`,
             }}
           >
-            <FloatingDollar delay={i * 0.3} duration={3 + (i % 2)} size={60 + (i % 3) * 30} />
+            <FloatingDollar
+              delay={i * 0.3}
+              duration={3 + (i % 2)}
+              size={60 + (i % 3) * 30}
+            />
           </div>
         ))}
       </div>
@@ -149,23 +152,21 @@ const Garage = () => {
             Back to Home
           </Button>
 
-          <div className="flex gap-2">
-
-            {isNative && (
-              <Button
-                onClick={handleRestore}
-                variant="ghost"
-                className="text-primary hover:text-primary/80"
-              >
-                <RotateCcw className="mr-2 h-4 w-4" />
-                Restore
-              </Button>
-            )}
-          </div>
+          {/* Restore Purchases button - only on Android */}
+          {isNative && (
+            <Button
+              onClick={handleRestore}
+              variant="ghost"
+              className="text-primary hover:text-primary/80"
+            >
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Restore
+            </Button>
+          )}
         </div>
 
         <h1
-          className="text-6xl font-bold text-center text-primary mb-6 tracking-wide"
+          className="text-6xl font-bold text-center text-primary mb-12 tracking-wide"
           style={{
             fontFamily: "'Brush Script MT', 'Segoe Script', cursive",
             textShadow: "0 0 30px rgba(255, 215, 0, 0.5)",
@@ -174,9 +175,7 @@ const Garage = () => {
           Luxury Level
         </h1>
 
-        <StatusChallenge purchasedCount={regularPurchasedCount} />
-
-        {/* Regular Vehicles (Levels 1-6) */}
+        {/* Vehículos Normales (Niveles 1-6) */}
         <div className="space-y-6">
           {regularVehicles.map((vehicle) => (
             <VehicleCard
@@ -187,22 +186,21 @@ const Garage = () => {
               price={vehicle.price}
               originalPrice={vehicle.originalPrice}
               onView={() => navigate(`/vehicle/${vehicle.level}`)}
-              onBuy={() => handleBuyClick(vehicle)}
+              onBuy={() => setSelectedVehicle(vehicle)}
               isPurchased={isPurchased(vehicle.level)}
               isNew={vehicle.level === 6 && !isPurchased(6)}
             />
           ))}
         </div>
 
-        {/* BONUS UNLOCK BANNER */}
-        <BonusUnlockBanner purchasedCount={regularPurchasedCount} totalRequired={6} />
-
-        {/* ELITE TIER separator */}
+        {/* Separador ELITE TIER */}
         {eliteVehicles.length > 0 && (
-          <div className="my-8 relative">
+          <div className="my-16 relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t-2 border-primary/40" 
-                style={{ boxShadow: "0 0 20px rgba(255, 215, 0, 0.5)" }}
+                style={{
+                  boxShadow: "0 0 20px rgba(255, 215, 0, 0.5)"
+                }}
               />
             </div>
             <div className="relative flex justify-center">
@@ -211,6 +209,7 @@ const Garage = () => {
                 style={{
                   fontFamily: "'Orbitron', sans-serif",
                   textShadow: "0 0 30px rgba(255, 215, 0, 0.8)",
+                  animation: "pulse-gold 2s ease-in-out infinite"
                 }}
               >
                 ⚜️ ELITE TIER ⚜️
@@ -219,41 +218,26 @@ const Garage = () => {
           </div>
         )}
 
-        {/* Elite Vehicles (Levels 7-9) - always visible */}
+        {/* Vehículos Elite (Niveles 7-9) */}
         <div className="space-y-8">
-          {eliteVehicles.map((vehicle) => {
-            const isLocked = !allRegularPurchased;
-            return (
-              <div key={vehicle.id} className="relative">
-                {isLocked && (
-                  <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-sm rounded-xl flex flex-col items-center justify-center gap-3 cursor-not-allowed">
-                    <div className="text-5xl">🔒</div>
-                    <span 
-                      className="text-sm font-black text-primary uppercase tracking-wider"
-                      style={{ fontFamily: "'Orbitron', sans-serif", textShadow: "0 0 20px rgba(255, 215, 0, 0.6)" }}
-                    >
-                      Completa los 6 niveles para desbloquear
-                    </span>
-                  </div>
-                )}
-                <EliteVehicleCard
-                  name={vehicle.name}
-                  image={vehicle.image}
-                  level={vehicle.level}
-                  price={vehicle.price}
-                  originalPrice={vehicle.originalPrice}
-                  description={vehicle.description || ""}
-                  onView={isLocked ? undefined : () => navigate(`/vehicle/${vehicle.level}`)}
-                  onBuy={isLocked ? undefined : () => handleBuyClick(vehicle)}
-                  isPurchased={isPurchased(vehicle.level)}
-                  isNew={vehicle.level >= 7}
-                />
-              </div>
-            );
-          })}
+          {eliteVehicles.map((vehicle) => (
+            <EliteVehicleCard
+              key={vehicle.id}
+              name={vehicle.name}
+              image={vehicle.image}
+              level={vehicle.level}
+              price={vehicle.price}
+              originalPrice={vehicle.originalPrice}
+              description={vehicle.description || ""}
+              onView={() => navigate(`/vehicle/${vehicle.level}`)}
+              onBuy={() => setSelectedVehicle(vehicle)}
+              isPurchased={isPurchased(vehicle.level)}
+              isNew={vehicle.level >= 7}
+            />
+          ))}
         </div>
 
-        {/* Charity Disclaimer */}
+        {/* Charity Disclaimer - Subtle */}
         <div className="mt-16 pt-8 border-t border-primary/10">
           <p className="text-xs text-muted-foreground/50 text-center max-w-lg mx-auto">
             Luxury Life es un proyecto benéfico legal. Las compras representan productos de lujo simbólicos que contribuyen a causas reales.
@@ -267,11 +251,11 @@ const Garage = () => {
           onClose={() => setSelectedVehicle(null)}
           vehicleName={selectedVehicle.name}
           price={selectedVehicle.price}
-          email=""
-          onEmailChange={() => {}}
+          email={email}
+          onEmailChange={setEmail}
           onPurchase={onPurchaseClick}
           isLoading={isLoading}
-          showEmailInput={false}
+          showEmailInput={!isNative}
         />
       )}
     </div>

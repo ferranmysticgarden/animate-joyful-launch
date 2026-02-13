@@ -3,40 +3,29 @@
 # ===========================================
 # LUXURY LIFE - Android AAB Build Script
 # ===========================================
-#
-# CONFIGURACION RECOMENDADA (Google Play Upload Key):
-#   Keystore: upload-keystore.jks
-#   Alias: upload
-#   Passwords: (NO se guardan aqui; usar variables de entorno)
-#
-#   Solo ejecuta: ./android-build.sh
-#
-# PARA FORZAR VERSION CODE:
-#   VERSION_CODE=20 ./android-build.sh
-# ===========================================
 
 echo "🚀 Luxury Life - Build AAB para Google Play"
 echo "============================================"
 
-# Defaults (sin contraseñas hardcodeadas)
-export KEYSTORE_PATH="${KEYSTORE_PATH:-release-key.jks}"
-export KEYSTORE_ALIAS="${KEYSTORE_ALIAS:-luxury-life}"
-
-if [ -z "$KEYSTORE_PASSWORD" ]; then
-  echo "❌ Falta KEYSTORE_PASSWORD (ej: export KEYSTORE_PASSWORD=tu_password)"
-  exit 1
-fi
-
-if [ -z "$KEYSTORE_ALIAS_PASSWORD" ]; then
-  echo "❌ Falta KEYSTORE_ALIAS_PASSWORD (ej: export KEYSTORE_ALIAS_PASSWORD=tu_password)"
-  exit 1
-fi
-
-# El keystore DEBE existir (no autogeneramos uno, para no romper el SHA1 de Google Play)
-if [ ! -f "$KEYSTORE_PATH" ]; then
-  echo "❌ No se encontró el keystore '$KEYSTORE_PATH'."
-  echo "   Colócalo en la raiz del proyecto o define KEYSTORE_PATH con su ruta."
-  exit 1
+# Check if keystore exists
+if [ ! -f "release-key.jks" ]; then
+    echo ""
+    echo "⚠️  No se encontró keystore. Creando uno nuevo..."
+    echo ""
+    echo "📝 Introduce los datos para tu keystore:"
+    
+    keytool -genkey -v \
+        -keystore release-key.jks \
+        -keyalg RSA \
+        -keysize 2048 \
+        -validity 10000 \
+        -alias luxury-life \
+        -storetype JKS
+    
+    echo ""
+    echo "✅ Keystore creado: release-key.jks"
+    echo "⚠️  ¡GUARDA ESTE ARCHIVO Y LAS CONTRASEÑAS EN LUGAR SEGURO!"
+    echo ""
 fi
 
 # Build web app
@@ -53,16 +42,23 @@ fi
 echo "🔄 Syncing with Android..."
 npx cap sync android
 
-# Copiamos el keystore al proyecto Android y forzamos que el firmado use este fichero
-if [ ! -d "android/app" ]; then
-  echo "❌ No se encontró android/app. ¿Falló npx cap sync android?"
-  exit 1
+# Signing config (usa variables de entorno para no teclear cada vez)
+export KEYSTORE_ALIAS="${KEYSTORE_ALIAS:-luxury-life}"
+export KEYSTORE_PATH="${KEYSTORE_PATH:-release-key.jks}"
+
+if [ -z "${KEYSTORE_PASSWORD:-}" ]; then
+  echo ""
+  echo "🔐 Introduce la contraseña del keystore:"
+  read -s KEYSTORE_PASSWORD
+  export KEYSTORE_PASSWORD
 fi
 
-echo "📋 Copiando keystore a android/app/release-key.jks..."
-cp -f "$KEYSTORE_PATH" "android/app/release-key.jks"
-
-export KEYSTORE_PATH="android/app/release-key.jks"
+if [ -z "${KEYSTORE_ALIAS_PASSWORD:-}" ]; then
+  echo ""
+  echo "🔐 Introduce la contraseña del alias:"
+  read -s KEYSTORE_ALIAS_PASSWORD
+  export KEYSTORE_ALIAS_PASSWORD
+fi
 
 echo "🔏 Preparando firmado + subiendo versionCode..."
 node scripts/android/prepare-android-release.mjs
@@ -72,11 +68,6 @@ echo "🏗️  Building AAB..."
 cd android
 ./gradlew bundleRelease
 
-if [ $? -ne 0 ]; then
-    echo ""
-    echo "❌ Error en el build. Revisa el mensaje anterior."
-    exit 1
-fi
 
 cd ..
 
@@ -88,8 +79,10 @@ echo "============================================"
 
 # Abrir carpeta con el AAB
 if [[ "$OSTYPE" == "darwin"* ]]; then
+    # Mac
     open android/app/build/outputs/bundle/release/
 else
+    # Linux
     xdg-open android/app/build/outputs/bundle/release/
 fi
 

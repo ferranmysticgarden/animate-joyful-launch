@@ -19,7 +19,6 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
-import { AuthGuard } from "./components/AuthGuard";
 import level1Image from "@/assets/level1-sports-car.png";
 import level2Image from "@/assets/level2-yacht.jpeg";
 import level3Image from "@/assets/level3-helicopter.webp";
@@ -66,13 +65,13 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/" element={<AuthGuard><Index /></AuthGuard>} />
-            <Route path="/garage" element={<AuthGuard><Garage /></AuthGuard>} />
-            <Route path="/vehicle/:id" element={<AuthGuard><VehicleRoute /></AuthGuard>} />
-            <Route path="/bonus" element={<AuthGuard><BonusScreen /></AuthGuard>} />
+            <Route path="/garage" element={<Garage />} />
+            <Route path="/vehicle/:id" element={<VehicleRoute />} />
+            <Route path="/bonus" element={<BonusScreen />} />
             <Route path="/vehicle/bonus" element={<Navigate to="/vehicle/6" replace />} />
-            <Route path="/payment-success" element={<AuthGuard><PaymentSuccess /></AuthGuard>} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<NotFound />} />

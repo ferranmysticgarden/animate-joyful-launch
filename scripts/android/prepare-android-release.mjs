@@ -171,8 +171,6 @@ const keystorePassword = process.env.KEYSTORE_PASSWORD;
 const keyAliasPassword = process.env.KEYSTORE_ALIAS_PASSWORD;
 const keyAlias = process.env.KEYSTORE_ALIAS || "luxury-life";
 
-console.log(`[android-signing] Key alias: ${keyAlias}`);
-
 if (!keystorePassword) fail("Missing env var KEYSTORE_PASSWORD.");
 if (!keyAliasPassword) fail("Missing env var KEYSTORE_ALIAS_PASSWORD.");
 
