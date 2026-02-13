@@ -1,1 +1,7 @@
 project_id = "wdcmoqtfcgcjxugezuvw"
+
+[functions.create-payment]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
