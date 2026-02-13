@@ -24,23 +24,10 @@ echo ============================================
 echo.
 
 REM Defaults (sin contraseñas hardcodeadas)
-if "%KEYSTORE_PATH%"=="" set KEYSTORE_PATH=release-key.jks
-if "%KEYSTORE_ALIAS%"=="" set KEYSTORE_ALIAS=luxury-life
-
-if "%KEYSTORE_PASSWORD%"=="" (
-    echo.
-    echo ❌ Falta KEYSTORE_PASSWORD.
-    echo    Ejemplo: set KEYSTORE_PASSWORD=tu_password
-    echo.
-    goto :error
-)
-if "%KEYSTORE_ALIAS_PASSWORD%"=="" (
-    echo.
-    echo ❌ Falta KEYSTORE_ALIAS_PASSWORD.
-    echo    Ejemplo: set KEYSTORE_ALIAS_PASSWORD=tu_password
-    echo.
-    goto :error
-)
+if "%KEYSTORE_PATH%"=="" set KEYSTORE_PATH=upload-keystore.jks
+if "%KEYSTORE_ALIAS%"=="" set KEYSTORE_ALIAS=upload
+if "%KEYSTORE_PASSWORD%"=="" set KEYSTORE_PASSWORD=luxury2026
+if "%KEYSTORE_ALIAS_PASSWORD%"=="" set KEYSTORE_ALIAS_PASSWORD=luxury2026
 
 REM El keystore DEBE existir (no autogeneramos uno, para no romper el SHA1 de Google Play)
 if not exist "%KEYSTORE_PATH%" (
