@@ -249,9 +249,10 @@ Modal de compra con:
 ```bash
 set KEYSTORE_PATH=release-key.jks
 set KEYSTORE_ALIAS=luxury-life
-set KEYSTORE_PASSWORD=LuxuryLife2024!
-set KEYSTORE_ALIAS_PASSWORD=LuxuryLife2024!
+set KEYSTORE_PASSWORD=<YOUR_KEYSTORE_PASSWORD>
+set KEYSTORE_ALIAS_PASSWORD=<YOUR_KEYSTORE_ALIAS_PASSWORD>
 ```
+> ⚠️ **NUNCA** hardcodees las contraseñas del keystore. Usa variables de entorno seguras.
 
 ### Comandos:
 ```bash
