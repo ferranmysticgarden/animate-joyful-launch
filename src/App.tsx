@@ -72,7 +72,7 @@ const App = () => {
             <Route path="/vehicle/:id" element={<AuthGuard><VehicleRoute /></AuthGuard>} />
             <Route path="/bonus" element={<AuthGuard><BonusScreen /></AuthGuard>} />
             <Route path="/vehicle/bonus" element={<Navigate to="/vehicle/6" replace />} />
-            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-success" element={<AuthGuard><PaymentSuccess /></AuthGuard>} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<NotFound />} />
