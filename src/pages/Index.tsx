@@ -133,7 +133,7 @@ const Index = () => {
       </div>
 
       <div className="relative z-10">
-        <GarageButton onClick={handleGarageClick} text="THE GARAGE 🚀" />
+        <GarageButton onClick={handleGarageClick} text="PLAY" />
       </div>
 
       <footer className="relative z-10 container mx-auto px-4 py-6 border-t border-primary/20 bg-black/40">
