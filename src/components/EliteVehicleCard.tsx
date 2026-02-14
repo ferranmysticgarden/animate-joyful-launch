@@ -61,8 +61,8 @@ export const EliteVehicleCard = ({
         }}
       />
 
-      {/* Crown badge - top left, above image */}
-      <div className="absolute top-3 left-3 z-30 flex items-center gap-2">
+      {/* Crown badge - above content, in flow */}
+      <div className="relative z-30 flex items-center gap-2 mb-4">
         <div 
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-primary/50"
           style={{
