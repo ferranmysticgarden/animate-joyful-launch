@@ -61,18 +61,18 @@ export const EliteVehicleCard = ({
         }}
       />
 
-      {/* Crown badge */}
-      <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
+      {/* Crown badge - top left, above image */}
+      <div className="absolute top-3 left-3 z-30 flex items-center gap-2">
         <div 
-          className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary/50"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-primary/50"
           style={{
-            background: "linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.2))",
-            boxShadow: "0 0 20px rgba(255, 215, 0, 0.4)",
+            background: "linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,140,0,0.3))",
+            boxShadow: "0 0 15px rgba(255, 215, 0, 0.4)",
           }}
         >
-          <Crown className="w-5 h-5 text-primary" />
+          <Crown className="w-4 h-4 text-primary" />
           <span 
-            className="text-sm font-black text-primary uppercase tracking-wider"
+            className="text-xs font-black text-primary uppercase tracking-wider"
             style={{ fontFamily: "'Orbitron', sans-serif" }}
           >
             ELITE
@@ -80,10 +80,10 @@ export const EliteVehicleCard = ({
         </div>
         {isNew && !isPurchased && (
           <div 
-            className="flex items-center justify-center gap-1 px-3 py-1 rounded-full border border-red-500/50 animate-pulse"
+            className="flex items-center gap-1 px-2 py-1.5 rounded-full border border-red-500/50 animate-pulse"
             style={{
               background: "linear-gradient(135deg, rgba(239,68,68,0.3), rgba(220,38,38,0.3))",
-              boxShadow: "0 0 15px rgba(239, 68, 68, 0.5)",
+              boxShadow: "0 0 10px rgba(239, 68, 68, 0.5)",
             }}
           >
             <Sparkles className="w-3 h-3 text-red-400" />
