@@ -68,11 +68,11 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/garage" element={<AuthGuard><Garage /></AuthGuard>} />
-            <Route path="/vehicle/:id" element={<AuthGuard><VehicleRoute /></AuthGuard>} />
-            <Route path="/bonus" element={<AuthGuard><BonusScreen /></AuthGuard>} />
+            <Route path="/garage" element={<Garage />} />
+            <Route path="/vehicle/:id" element={<VehicleRoute />} />
+            <Route path="/bonus" element={<BonusScreen />} />
             <Route path="/vehicle/bonus" element={<Navigate to="/vehicle/6" replace />} />
-            <Route path="/payment-success" element={<AuthGuard><PaymentSuccess /></AuthGuard>} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<NotFound />} />
