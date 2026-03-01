@@ -67,6 +67,7 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/index.html" element={<Navigate to="/" replace />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/garage" element={<Garage />} />
             <Route path="/vehicle/:id" element={<VehicleRoute />} />
