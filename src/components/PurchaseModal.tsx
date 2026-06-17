@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Loader2 } from "lucide-react";
+import { Loader2, Heart } from "lucide-react";
 
 interface PurchaseModalProps {
   open: boolean;
@@ -67,6 +67,13 @@ export const PurchaseModal = ({
             {showEmailInput ? "Secure Stripe checkout" : "Secure Google Play purchase"}
           </p>
           
+          <div className="flex items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3">
+            <Heart className="h-5 w-5 text-red-500 fill-red-500" />
+            <p className="text-sm font-semibold text-foreground text-center">
+              70% goes to UNICEF · 30% platform costs
+            </p>
+          </div>
+
           <div className="flex gap-4 justify-center pt-2">
             <Button
               onClick={onPurchase}

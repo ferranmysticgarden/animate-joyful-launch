@@ -9,9 +9,6 @@ import { ParticleBackground } from "@/components/ParticleBackground";
 import { GarageButton } from "@/components/GarageButton";
 import { LanguageSwitch } from "@/components/LanguageSwitch";
 import { DollarSymbol } from "@/components/DollarSymbol";
-import { PurchaseNotification } from "@/components/PurchaseNotification";
-import { PurchaseCounter } from "@/components/PurchaseCounter";
-import { UrgencyTimer } from "@/components/UrgencyTimer";
 import { TrustBadges } from "@/components/TrustBadges";
 import { Testimonials } from "@/components/Testimonials";
 import { DonationProgress } from "@/components/DonationProgress";
@@ -73,13 +70,6 @@ const Index = () => {
       <ParticleBackground />
       <Confetti show={showConfetti} />
       <LanguageSwitch currentLang={lang} onLanguageChange={setLang} />
-      <PurchaseNotification />
-
-      {/* Top bars - Urgency + Counter */}
-      <div className="relative z-20 pt-12">
-        <UrgencyTimer />
-        <PurchaseCounter />
-      </div>
 
       <section className="relative z-10 container mx-auto px-4 flex flex-col items-center justify-center py-8">
         <div className="text-center space-y-2">
@@ -108,9 +98,6 @@ const Index = () => {
               </p>
               <p className="text-base md:text-lg text-primary animate-pulse-gold font-semibold">
                 💎 Your status. Your rules.
-              </p>
-              <p className="text-sm text-red-400 animate-pulse font-bold mt-2">
-                🔥 Only 47 spots left at this price 🔥
               </p>
             </div>
           )}
