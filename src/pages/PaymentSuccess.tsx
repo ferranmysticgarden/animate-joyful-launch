@@ -109,7 +109,7 @@ const PaymentSuccess = () => {
           )}
 
           <p className="text-muted-foreground">
-            Thank you for your purchase. A portion of your payment goes to charity.
+            Your donation receipt will be sent to your email.
           </p>
         </div>
 

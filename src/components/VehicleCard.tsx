@@ -6,7 +6,6 @@ interface VehicleCardProps {
   image: string;
   level: number;
   price: string;
-  originalPrice?: string; // For strikethrough discount
   onView?: () => void;
   onBuy?: () => void;
   isPurchased?: boolean;
@@ -18,7 +17,6 @@ export const VehicleCard = ({
   image,
   level,
   price,
-  originalPrice,
   onView,
   onBuy,
   isPurchased = false,
@@ -93,14 +91,6 @@ export const VehicleCard = ({
             ))}
           </div>
           <div className="mt-2 flex items-center gap-2">
-            {originalPrice && (
-              <span 
-                className="text-lg text-muted-foreground line-through"
-                style={{ fontFamily: "'Orbitron', sans-serif" }}
-              >
-                {originalPrice}
-              </span>
-            )}
             <span
               className="text-2xl font-bold text-primary"
               style={{
@@ -110,11 +100,6 @@ export const VehicleCard = ({
             >
               {price}
             </span>
-            {originalPrice && (
-              <span className="text-xs bg-red-500 text-white px-2 py-0.5 rounded-full font-bold animate-pulse">
-                SALE!
-              </span>
-            )}
           </div>
         </div>
 
