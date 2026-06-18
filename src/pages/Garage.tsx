@@ -259,6 +259,19 @@ const Garage = () => {
           showEmailInput={!isNative && !email}
         />
       )}
+
+      {unlockedVehicle && (
+        <LevelUnlockedOverlay
+          level={unlockedVehicle.level}
+          vehicleName={unlockedVehicle.name}
+          priceValue={unlockedVehicle.priceValue}
+          onComplete={() => {
+            const lvl = unlockedVehicle.level;
+            setUnlockedVehicle(null);
+            navigate(`/vehicle/${lvl}`);
+          }}
+        />
+      )}
     </div>
   );
 };
