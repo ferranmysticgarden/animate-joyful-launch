@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { VehicleCard } from "@/components/VehicleCard";
 import { EliteVehicleCard } from "@/components/EliteVehicleCard";
 import { PurchaseModal } from "@/components/PurchaseModal";
+import { LevelUnlockedOverlay } from "@/components/LevelUnlockedOverlay";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -72,6 +73,7 @@ const allVehicles: Vehicle[] = [
 
 const Garage = () => {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
+  const [unlockedVehicle, setUnlockedVehicle] = useState<Vehicle | null>(null);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { isPurchased } = usePurchases();
@@ -101,10 +103,16 @@ const Garage = () => {
 
   const onPurchaseClick = async () => {
     if (!selectedVehicle) return;
-    
-    const success = await handlePurchase(selectedVehicle);
+
+    const purchased = selectedVehicle;
+    const success = await handlePurchase(purchased);
     if (success) {
       setSelectedVehicle(null);
+      // On native (Google Play), purchase completes in-app — show celebration here.
+      // On web, Stripe redirects to /payment-success which shows its own overlay.
+      if (isNative) {
+        setUnlockedVehicle(purchased);
+      }
     }
   };
 
