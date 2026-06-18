@@ -30,23 +30,43 @@ export const PurchaseModal = ({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="bg-card/95 backdrop-blur-sm border-primary/30">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-center text-foreground font-bold mb-4">
-            Purchase {vehicleName} for {price}?
+          <DialogTitle className="text-2xl text-center text-foreground font-bold mb-2">
+            Purchase {vehicleName} for {price}
           </DialogTitle>
         </DialogHeader>
-        
+
+        <div
+          className="flex items-center justify-center gap-2 rounded-full border border-primary/60 px-4 py-2.5 mx-auto"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,140,0,0.18), rgba(255,215,0,0.12))",
+            boxShadow: "0 0 18px rgba(255,215,0,0.35)",
+          }}
+        >
+          <Heart className="h-5 w-5 text-red-500 fill-red-500" />
+          <p
+            className="text-sm font-bold text-primary text-center"
+            style={{
+              fontFamily: "'Orbitron', sans-serif",
+              textShadow: "0 0 10px rgba(255,215,0,0.5)",
+            }}
+          >
+            70% va a UNICEF · 30% costes de plataforma
+          </p>
+        </div>
+
         <div className="space-y-4">
           {/* Status quote */}
-          <p 
+          <p
             className="text-xl text-center text-primary font-bold tracking-wide"
-            style={{ 
+            style={{
               fontFamily: "'Orbitron', sans-serif",
               textShadow: "0 0 20px rgba(255, 215, 0, 0.5)"
             }}
           >
             "Your status speaks for itself."
           </p>
-          
+
           {showEmailInput && (
             <div>
               <label className="text-sm text-muted-foreground mb-2 block">
@@ -62,17 +82,10 @@ export const PurchaseModal = ({
               />
             </div>
           )}
-          
+
           <p className="text-xs text-muted-foreground/60 text-center">
             {showEmailInput ? "Secure Stripe checkout" : "Secure Google Play purchase"}
           </p>
-          
-          <div className="flex items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3">
-            <Heart className="h-5 w-5 text-red-500 fill-red-500" />
-            <p className="text-sm font-semibold text-foreground text-center">
-              70% goes to UNICEF · 30% platform costs
-            </p>
-          </div>
 
           <div className="flex gap-4 justify-center pt-2">
             <Button

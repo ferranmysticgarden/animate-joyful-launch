@@ -3,7 +3,20 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { CheckCircle, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Confetti } from "@/components/Confetti";
+import { LevelUnlockedOverlay } from "@/components/LevelUnlockedOverlay";
 import { supabase } from "@/integrations/supabase/client";
+
+const LEVEL_DATA: Record<string, { name: string; price: number }> = {
+  "1": { name: "Sports Car", price: 100 },
+  "2": { name: "Yacht", price: 500 },
+  "3": { name: "Helicopter", price: 1000 },
+  "4": { name: "Private Jet", price: 2500 },
+  "5": { name: "Luxury Mansion", price: 5000 },
+  "6": { name: "Luxury Island", price: 10000 },
+  "7": { name: "Private Paradise Island", price: 50000 },
+  "8": { name: "Orbital Space Station", price: 250000 },
+  "9": { name: "Own a Planet", price: 1000000 },
+};
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -11,6 +24,7 @@ const PaymentSuccess = () => {
   const [showConfetti, setShowConfetti] = useState(true);
   const [verified, setVerified] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [showOverlay, setShowOverlay] = useState(false);
   const level = searchParams.get("level");
 
   useEffect(() => {
@@ -37,6 +51,7 @@ const PaymentSuccess = () => {
           setVerified(true);
           unlockLevel(numericLevel);
           setChecking(false);
+          setShowOverlay(true);
           return;
         }
       } catch (err) {
@@ -44,9 +59,9 @@ const PaymentSuccess = () => {
       }
 
       if (attempts >= maxAttempts) {
-        // Even if not verified via DB, unlock locally as fallback
         unlockLevel(numericLevel);
         setChecking(false);
+        setShowOverlay(true);
         return;
       }
 
@@ -66,24 +81,25 @@ const PaymentSuccess = () => {
     localStorage.setItem("luxury_purchases", JSON.stringify(updated));
   };
 
-  const getLevelName = () => {
-    switch (level) {
-      case "1": return "Sports Car";
-      case "2": return "Yacht";
-      case "3": return "Helicopter";
-      case "4": return "Private Jet";
-      case "5": return "Luxury Mansion";
-      case "6": return "Luxury Island";
-      case "7": return "Private Paradise Island";
-      case "8": return "Orbital Space Station";
-      case "9": return "Own a Planet";
-      default: return "Luxury Item";
-    }
-  };
+  const levelInfo = level ? LEVEL_DATA[level] : null;
+  const vehicleName = levelInfo?.name ?? "Luxury Item";
+  const priceValue = levelInfo?.price ?? 0;
 
   return (
     <div className="min-h-screen bg-gradient-dark flex items-center justify-center p-4">
       <Confetti show={showConfetti} />
+
+      {showOverlay && level && (
+        <LevelUnlockedOverlay
+          level={Number(level)}
+          vehicleName={vehicleName}
+          priceValue={priceValue}
+          onComplete={() => {
+            setShowOverlay(false);
+            navigate(`/vehicle/${level}`);
+          }}
+        />
+      )}
 
       <div className="text-center space-y-8 max-w-md">
         <div className="animate-bounce">
@@ -97,7 +113,7 @@ const PaymentSuccess = () => {
 
           <div className="flex items-center justify-center gap-2 text-xl text-white/80">
             <Sparkles className="w-6 h-6 text-primary" />
-            <span>You now own the {getLevelName()}!</span>
+            <span>You now own the {vehicleName}!</span>
             <Sparkles className="w-6 h-6 text-primary" />
           </div>
 
