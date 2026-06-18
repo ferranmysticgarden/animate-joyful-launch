@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Card } from "./ui/card";
 import { Diamond, Check, Sparkles } from "lucide-react";
 
@@ -23,6 +24,17 @@ export const VehicleCard = ({
   isNew = false,
 }: VehicleCardProps) => {
   const isClickable = typeof onView === "function";
+  const prevPurchased = useRef(isPurchased);
+  const [justUnlocked, setJustUnlocked] = useState(false);
+
+  useEffect(() => {
+    if (!prevPurchased.current && isPurchased) {
+      setJustUnlocked(true);
+      const t = setTimeout(() => setJustUnlocked(false), 1000);
+      return () => clearTimeout(t);
+    }
+    prevPurchased.current = isPurchased;
+  }, [isPurchased]);
 
   return (
     <Card
@@ -44,7 +56,7 @@ export const VehicleCard = ({
     >
       <div className="flex items-center gap-6">
         <div
-          className="relative w-36 h-36 rounded-xl overflow-hidden flex-shrink-0"
+          className={`relative w-36 h-36 rounded-xl overflow-hidden flex-shrink-0 ${justUnlocked ? "animate-unlock-color" : ""}`}
           style={{
             background:
               "radial-gradient(circle at center, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)",

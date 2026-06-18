@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Card } from "./ui/card";
 import { Diamond, Check, Crown, Sparkles } from "lucide-react";
 
@@ -25,6 +26,17 @@ export const EliteVehicleCard = ({
   isNew = false,
 }: EliteVehicleCardProps) => {
   const isClickable = typeof onView === "function";
+  const prevPurchased = useRef(isPurchased);
+  const [justUnlocked, setJustUnlocked] = useState(false);
+
+  useEffect(() => {
+    if (!prevPurchased.current && isPurchased) {
+      setJustUnlocked(true);
+      const t = setTimeout(() => setJustUnlocked(false), 1000);
+      return () => clearTimeout(t);
+    }
+    prevPurchased.current = isPurchased;
+  }, [isPurchased]);
 
   return (
     <Card
@@ -98,7 +110,7 @@ export const EliteVehicleCard = ({
       <div className="flex items-center gap-8 relative z-10">
         {/* Image container with special glow */}
         <div
-          className="relative w-44 h-44 rounded-2xl overflow-hidden flex-shrink-0"
+          className={`relative w-44 h-44 rounded-2xl overflow-hidden flex-shrink-0 ${justUnlocked ? "animate-unlock-color" : ""}`}
           style={{
             boxShadow: "0 0 40px rgba(255, 215, 0, 0.5), inset 0 0 40px rgba(255, 215, 0, 0.1)",
           }}
